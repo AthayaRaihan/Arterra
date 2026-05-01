@@ -9,6 +9,8 @@ class EduQuality extends Model
 {
     use HasFactory;
 
+    protected $table = 'eduquality';
+
     protected $fillable = [
         'kabupaten/kota',
         'aps',
@@ -23,5 +25,24 @@ class EduQuality extends Model
         'sekolah_lab',
         'persebaran_sekolah',
         'akses_sekolah',
+        'eqi_score',
+        'kategori',
+        'warna',
+    ];
+
+    protected $casts = [
+        'aps'               => 'float',
+        'apk'               => 'float',
+        'ruang_kelas'       => 'float',
+        'rls'               => 'float',
+        'rasio_guru'        => 'float',
+        'siswa_per_sekolah' => 'float',
+        'dropout_rate'      => 'float',
+        'akses_internet'    => 'float',
+        'guru_s1'           => 'float',
+        'sekolah_lab'       => 'float',
+        'persebaran_sekolah'=> 'float',
+        'akses_sekolah'     => 'float',
+        'eqi_score'         => 'float',
     ];
 }

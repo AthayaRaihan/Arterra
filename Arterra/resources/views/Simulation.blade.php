@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }} - Simulation</title>
 
@@ -121,110 +122,132 @@
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Rata-rata Lama Sekolah (RLS)</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputRLS" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="15" step="0.1">
+                                            <input type="number" id="inputRLS" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="20" step="0.1">
                                             <span class="text-sm text-slate-500">tahun</span>
                                         </div>
-                                        <input type="range" id="sliderRLS" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="15" step="0.1">
-                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 15 tahun</p>
+                                        <input type="range" id="sliderRLS" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="20" step="0.1">
+                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 20 tahun</p>
                                     </div>
 
-                                    <!-- APS SD -->
+                                    <!-- APS -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APS SD/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Angka Partisipasi Sekolah (APS)</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPSSD" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputAPS" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPSSD" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderAPS" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- APS SMP -->
+                                    <!-- APK -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APS SMP/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Angka Partisipasi Kasar (APK)</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPSSMP" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputAPK" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPSSMP" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderAPK" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- APS SMA -->
+                                    <!-- Ruang Kelas Layak -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APS SMA/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Ruang Kelas Layak</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPSSMA" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputRuangKelas" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPSSMA" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderRuangKelas" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- APK SD -->
+                                    <!-- Rasio Guru Siswa -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APK SD/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Rasio Guru per Siswa</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPKSD" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputRasioGuru" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <span class="text-sm text-slate-500">rasio</span>
+                                        </div>
+                                        <input type="range" id="sliderRasioGuru" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100</p>
+                                    </div>
+
+                                    <!-- Siswa per Sekolah -->
+                                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Siswa per Sekolah</label>
+                                        <div class="flex items-baseline gap-2 mb-4">
+                                            <input type="number" id="inputSiswaPerSekolah" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="2000" step="1">
+                                            <span class="text-sm text-slate-500">siswa</span>
+                                        </div>
+                                        <input type="range" id="sliderSiswaPerSekolah" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="2000" step="1">
+                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 2000 siswa</p>
+                                    </div>
+
+                                    <!-- Dropout Rate -->
+                                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Dropout Rate</label>
+                                        <div class="flex items-baseline gap-2 mb-4">
+                                            <input type="number" id="inputDropout" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPKSD" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderDropout" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- APK SMP -->
+                                    <!-- Akses Internet -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APK SMP/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Akses Internet</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPKSMP" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputAksesInternet" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPKSMP" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderAksesInternet" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- APK SMA -->
+                                    <!-- Guru S1 -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">APK SMA/Sederajat</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Guru Berkualifikasi S1</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputAPKSMA" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputGuruS1" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderAPKSMA" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderGuruS1" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- Literacy Rate -->
+                                    <!-- Sekolah Lab -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Tingkat Literasi</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Sekolah dengan Lab</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputLiteracy" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <input type="number" id="inputSekolahLab" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
                                             <span class="text-sm text-slate-500">%</span>
                                         </div>
-                                        <input type="range" id="sliderLiteracy" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <input type="range" id="sliderSekolahLab" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
                                         <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
                                     </div>
 
-                                    <!-- Teacher Ratio -->
+                                    <!-- Persebaran Sekolah -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Rasio Murid/Guru</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Persebaran Sekolah</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputTeacherRatio" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="5" max="50" step="0.1">
-                                            <span class="text-sm text-slate-500">murid</span>
+                                            <input type="number" id="inputPersebaran" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <span class="text-sm text-slate-500">indeks</span>
                                         </div>
-                                        <input type="range" id="sliderTeacherRatio" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="5" max="50" step="0.1">
-                                        <p class="mt-2 text-xs text-slate-500">Rentang: 5 - 50 murid/guru</p>
+                                        <input type="range" id="sliderPersebaran" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100</p>
                                     </div>
 
-                                    <!-- Pass Rate -->
+                                    <!-- Akses Sekolah -->
                                     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Tingkat Kelulusan</label>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Akses Sekolah</label>
                                         <div class="flex items-baseline gap-2 mb-4">
-                                            <input type="number" id="inputPassRate" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
-                                            <span class="text-sm text-slate-500">%</span>
+                                            <input type="number" id="inputAksesSekolah" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-2xl font-bold text-[#1F2937] focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20" min="0" max="100" step="0.1">
+                                            <span class="text-sm text-slate-500">indeks</span>
                                         </div>
-                                        <input type="range" id="sliderPassRate" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
-                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100%</p>
+                                        <input type="range" id="sliderAksesSekolah" class="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer" min="0" max="100" step="0.1">
+                                        <p class="mt-2 text-xs text-slate-500">Rentang: 0 - 100</p>
                                     </div>
                                 </div>
                             </section>
@@ -353,7 +376,7 @@
 
                                         <div>
                                             <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Rata-rata APS</span>
+                                                <span class="text-sm font-medium text-slate-700">Angka Partisipasi Sekolah (APS)</span>
                                                 <span class="text-sm font-bold text-slate-700"><span id="compAPS">0</span>% → <span id="compAPSNew">0</span>%</span>
                                             </div>
                                             <div class="flex gap-2">
@@ -368,7 +391,7 @@
 
                                         <div>
                                             <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Rata-rata APK</span>
+                                                <span class="text-sm font-medium text-slate-700">Angka Partisipasi Kasar (APK)</span>
                                                 <span class="text-sm font-bold text-slate-700"><span id="compAPK">0</span>% → <span id="compAPKNew">0</span>%</span>
                                             </div>
                                             <div class="flex gap-2">
@@ -383,15 +406,15 @@
 
                                         <div>
                                             <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Tingkat Literasi</span>
-                                                <span class="text-sm font-bold text-slate-700"><span id="compLiteracy">0</span>% → <span id="compLiteracyNew">0</span>%</span>
+                                                <span class="text-sm font-medium text-slate-700">Akses Internet</span>
+                                                <span class="text-sm font-bold text-slate-700"><span id="compAkses">0</span>% → <span id="compAksesNew">0</span>%</span>
                                             </div>
                                             <div class="flex gap-2">
                                                 <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div id="compBarLiteracy" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
+                                                    <div id="compBarAkses" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
                                                 </div>
                                                 <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div id="compBarLiteracyNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
+                                                    <div id="compBarAksesNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -405,11 +428,31 @@
         </div>
 
         <script>
+            const apiEndpoints = {
+                hitungEqi: "{{ route('simulation.hitung-eqi') }}",
+                sensitivity: "{{ route('simulation.sensitivity') }}"
+            };
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            async function postJson(url, payload) {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                return response.json();
+            }
+
             // Dummy data for each region and year
             const regionData = {
-                'Cilacap': { '2021': { rls: 7.2, apsSD: 95, apsSMP: 82, apsSMA: 65, apkSD: 105, apkSMP: 88, apkSMA: 67, literacy: 85, teacherRatio: 18, passRate: 88, eqi: 72 }, '2022': { rls: 7.3, apsSD: 96, apsSMP: 83, apsSMA: 66, apkSD: 106, apkSMP: 89, apkSMA: 68, literacy: 86, teacherRatio: 17.5, passRate: 89, eqi: 74 }, '2023': { rls: 7.4, apsSD: 97, apsSMP: 84, apsSMA: 67, apkSD: 107, apkSMP: 90, apkSMA: 69, literacy: 87, teacherRatio: 17, passRate: 90, eqi: 76 }, '2024': { rls: 7.5, apsSD: 98, apsSMP: 85, apsSMA: 68, apkSD: 108, apkSMP: 91, apkSMA: 70, literacy: 88, teacherRatio: 16.5, passRate: 91, eqi: 78 } },
-                'Banyumas': { '2021': { rls: 6.8, apsSD: 92, apsSMP: 78, apsSMA: 60, apkSD: 100, apkSMP: 85, apkSMA: 65, literacy: 82, teacherRatio: 20, passRate: 85, eqi: 68 }, '2022': { rls: 6.9, apsSD: 93, apsSMP: 79, apsSMA: 61, apkSD: 102, apkSMP: 86, apkSMA: 66, literacy: 83, teacherRatio: 19.5, passRate: 86, eqi: 70 }, '2023': { rls: 7.0, apsSD: 94, apsSMP: 80, apsSMA: 62, apkSD: 103, apkSMP: 87, apkSMA: 67, literacy: 84, teacherRatio: 19, passRate: 87, eqi: 72 }, '2024': { rls: 7.1, apsSD: 95, apsSMP: 81, apsSMA: 63, apkSD: 104, apkSMP: 88, apkSMA: 68, literacy: 85, teacherRatio: 18.5, passRate: 88, eqi: 74 } },
-                'Kota Semarang': { '2021': { rls: 8.2, apsSD: 98, apsSMP: 90, apsSMA: 78, apkSD: 110, apkSMP: 95, apkSMA: 80, literacy: 92, teacherRatio: 15, passRate: 94, eqi: 85 }, '2022': { rls: 8.3, apsSD: 99, apsSMP: 91, apsSMA: 79, apkSD: 111, apkSMP: 96, apkSMA: 81, literacy: 93, teacherRatio: 14.5, passRate: 95, eqi: 87 }, '2023': { rls: 8.4, apsSD: 100, apsSMP: 92, apsSMA: 80, apkSD: 112, apkSMP: 97, apkSMA: 82, literacy: 94, teacherRatio: 14, passRate: 96, eqi: 89 }, '2024': { rls: 8.5, apsSD: 101, apsSMP: 93, apsSMA: 81, apkSD: 113, apkSMP: 98, apkSMA: 83, literacy: 95, teacherRatio: 13.5, passRate: 97, eqi: 91 } }
+                'Cilacap': { '2021': { aps: 82, apk: 88, ruang_kelas_layak: 71, rata_lama_sekolah: 7.2, rasio_guru_siswa: 18, siswa_per_sekolah: 420, dropout_rate: 3.2, akses_internet: 76, guru_s1: 64, sekolah_lab: 55, persebaran_sekolah: 68, akses_sekolah: 72 }, '2022': { aps: 83, apk: 89, ruang_kelas_layak: 73, rata_lama_sekolah: 7.3, rasio_guru_siswa: 17.5, siswa_per_sekolah: 415, dropout_rate: 3.0, akses_internet: 78, guru_s1: 66, sekolah_lab: 56, persebaran_sekolah: 69, akses_sekolah: 73 }, '2023': { aps: 84, apk: 90, ruang_kelas_layak: 74, rata_lama_sekolah: 7.4, rasio_guru_siswa: 17, siswa_per_sekolah: 410, dropout_rate: 2.8, akses_internet: 80, guru_s1: 68, sekolah_lab: 58, persebaran_sekolah: 70, akses_sekolah: 74 }, '2024': { aps: 85, apk: 91, ruang_kelas_layak: 76, rata_lama_sekolah: 7.5, rasio_guru_siswa: 16.5, siswa_per_sekolah: 405, dropout_rate: 2.6, akses_internet: 82, guru_s1: 70, sekolah_lab: 60, persebaran_sekolah: 72, akses_sekolah: 75 } },
+                'Banyumas': { '2021': { aps: 78, apk: 84, ruang_kelas_layak: 66, rata_lama_sekolah: 6.8, rasio_guru_siswa: 20, siswa_per_sekolah: 460, dropout_rate: 3.8, akses_internet: 70, guru_s1: 60, sekolah_lab: 48, persebaran_sekolah: 64, akses_sekolah: 68 }, '2022': { aps: 79, apk: 85, ruang_kelas_layak: 67, rata_lama_sekolah: 6.9, rasio_guru_siswa: 19.5, siswa_per_sekolah: 450, dropout_rate: 3.6, akses_internet: 71, guru_s1: 61, sekolah_lab: 49, persebaran_sekolah: 65, akses_sekolah: 69 }, '2023': { aps: 80, apk: 86, ruang_kelas_layak: 68, rata_lama_sekolah: 7.0, rasio_guru_siswa: 19, siswa_per_sekolah: 445, dropout_rate: 3.4, akses_internet: 72, guru_s1: 62, sekolah_lab: 51, persebaran_sekolah: 66, akses_sekolah: 70 }, '2024': { aps: 81, apk: 87, ruang_kelas_layak: 70, rata_lama_sekolah: 7.1, rasio_guru_siswa: 18.5, siswa_per_sekolah: 440, dropout_rate: 3.2, akses_internet: 74, guru_s1: 64, sekolah_lab: 52, persebaran_sekolah: 67, akses_sekolah: 71 } },
+                'Kota Semarang': { '2021': { aps: 90, apk: 96, ruang_kelas_layak: 82, rata_lama_sekolah: 8.2, rasio_guru_siswa: 15, siswa_per_sekolah: 380, dropout_rate: 2.1, akses_internet: 88, guru_s1: 78, sekolah_lab: 72, persebaran_sekolah: 79, akses_sekolah: 84 }, '2022': { aps: 91, apk: 97, ruang_kelas_layak: 83, rata_lama_sekolah: 8.3, rasio_guru_siswa: 14.5, siswa_per_sekolah: 375, dropout_rate: 2.0, akses_internet: 89, guru_s1: 79, sekolah_lab: 74, persebaran_sekolah: 80, akses_sekolah: 85 }, '2023': { aps: 92, apk: 98, ruang_kelas_layak: 84, rata_lama_sekolah: 8.4, rasio_guru_siswa: 14, siswa_per_sekolah: 370, dropout_rate: 1.9, akses_internet: 90, guru_s1: 80, sekolah_lab: 75, persebaran_sekolah: 81, akses_sekolah: 86 }, '2024': { aps: 93, apk: 99, ruang_kelas_layak: 85, rata_lama_sekolah: 8.5, rasio_guru_siswa: 13.5, siswa_per_sekolah: 365, dropout_rate: 1.8, akses_internet: 91, guru_s1: 82, sekolah_lab: 76, persebaran_sekolah: 82, akses_sekolah: 87 } }
             };
 
             // Fill with default data for all regions
@@ -420,6 +463,8 @@
             let currentRegion = null;
             let currentYear = null;
             let originalData = null;
+            let baselineEqi = null;
+            let debounceTimer = null;
 
             const regionSelect = document.getElementById('regionSelect');
             const yearSelect = document.getElementById('yearSelect');
@@ -429,44 +474,48 @@
             // Input elements
             const inputs = {
                 rls: document.getElementById('inputRLS'),
-                apsSD: document.getElementById('inputAPSSD'),
-                apsSMP: document.getElementById('inputAPSSMP'),
-                apsSMA: document.getElementById('inputAPSSMA'),
-                apkSD: document.getElementById('inputAPKSD'),
-                apkSMP: document.getElementById('inputAPKSMP'),
-                apkSMA: document.getElementById('inputAPKSMA'),
-                literacy: document.getElementById('inputLiteracy'),
-                teacherRatio: document.getElementById('inputTeacherRatio'),
-                passRate: document.getElementById('inputPassRate')
+                aps: document.getElementById('inputAPS'),
+                apk: document.getElementById('inputAPK'),
+                ruang_kelas_layak: document.getElementById('inputRuangKelas'),
+                rasio_guru_siswa: document.getElementById('inputRasioGuru'),
+                siswa_per_sekolah: document.getElementById('inputSiswaPerSekolah'),
+                dropout_rate: document.getElementById('inputDropout'),
+                akses_internet: document.getElementById('inputAksesInternet'),
+                guru_s1: document.getElementById('inputGuruS1'),
+                sekolah_lab: document.getElementById('inputSekolahLab'),
+                persebaran_sekolah: document.getElementById('inputPersebaran'),
+                akses_sekolah: document.getElementById('inputAksesSekolah')
             };
 
             const sliders = {
                 rls: document.getElementById('sliderRLS'),
-                apsSD: document.getElementById('sliderAPSSD'),
-                apsSMP: document.getElementById('sliderAPSSMP'),
-                apsSMA: document.getElementById('sliderAPSSMA'),
-                apkSD: document.getElementById('sliderAPKSD'),
-                apkSMP: document.getElementById('sliderAPKSMP'),
-                apkSMA: document.getElementById('sliderAPKSMA'),
-                literacy: document.getElementById('sliderLiteracy'),
-                teacherRatio: document.getElementById('sliderTeacherRatio'),
-                passRate: document.getElementById('sliderPassRate')
+                aps: document.getElementById('sliderAPS'),
+                apk: document.getElementById('sliderAPK'),
+                ruang_kelas_layak: document.getElementById('sliderRuangKelas'),
+                rasio_guru_siswa: document.getElementById('sliderRasioGuru'),
+                siswa_per_sekolah: document.getElementById('sliderSiswaPerSekolah'),
+                dropout_rate: document.getElementById('sliderDropout'),
+                akses_internet: document.getElementById('sliderAksesInternet'),
+                guru_s1: document.getElementById('sliderGuruS1'),
+                sekolah_lab: document.getElementById('sliderSekolahLab'),
+                persebaran_sekolah: document.getElementById('sliderPersebaran'),
+                akses_sekolah: document.getElementById('sliderAksesSekolah')
             };
 
             // Sync input and slider
-            function syncInputSlider(inputId, sliderId) {
+            function syncInputSlider(inputId) {
                 inputs[inputId].addEventListener('input', function() {
                     sliders[inputId].value = this.value;
-                    updateResults();
+                    scheduleSimulation();
                 });
 
                 sliders[inputId].addEventListener('input', function() {
                     inputs[inputId].value = this.value;
-                    updateResults();
+                    scheduleSimulation();
                 });
             }
 
-            Object.keys(inputs).forEach(key => syncInputSlider(key, key));
+            Object.keys(inputs).forEach(key => syncInputSlider(key));
 
             regionSelect.addEventListener('change', function() {
                 currentRegion = this.value;
@@ -484,6 +533,7 @@
                 simulationContent.classList.add('hidden');
                 currentRegion = null;
                 currentYear = null;
+                baselineEqi = null;
             });
 
             function loadData() {
@@ -492,144 +542,122 @@
                 originalData = JSON.parse(JSON.stringify(data));
 
                 // Populate inputs
-                inputs.rls.value = data.rls;
-                sliders.rls.value = data.rls;
-                inputs.apsSD.value = data.apsSD;
-                sliders.apsSD.value = data.apsSD;
-                inputs.apsSMP.value = data.apsSMP;
-                sliders.apsSMP.value = data.apsSMP;
-                inputs.apsSMA.value = data.apsSMA;
-                sliders.apsSMA.value = data.apsSMA;
-                inputs.apkSD.value = data.apkSD;
-                sliders.apkSD.value = data.apkSD;
-                inputs.apkSMP.value = data.apkSMP;
-                sliders.apkSMP.value = data.apkSMP;
-                inputs.apkSMA.value = data.apkSMA;
-                sliders.apkSMA.value = data.apkSMA;
-                inputs.literacy.value = data.literacy;
-                sliders.literacy.value = data.literacy;
-                inputs.teacherRatio.value = data.teacherRatio;
-                sliders.teacherRatio.value = data.teacherRatio;
-                inputs.passRate.value = data.passRate;
-                sliders.passRate.value = data.passRate;
+                inputs.rls.value = data.rata_lama_sekolah;
+                sliders.rls.value = data.rata_lama_sekolah;
+                inputs.aps.value = data.aps;
+                sliders.aps.value = data.aps;
+                inputs.apk.value = data.apk;
+                sliders.apk.value = data.apk;
+                inputs.ruang_kelas_layak.value = data.ruang_kelas_layak;
+                sliders.ruang_kelas_layak.value = data.ruang_kelas_layak;
+                inputs.rasio_guru_siswa.value = data.rasio_guru_siswa;
+                sliders.rasio_guru_siswa.value = data.rasio_guru_siswa;
+                inputs.siswa_per_sekolah.value = data.siswa_per_sekolah;
+                sliders.siswa_per_sekolah.value = data.siswa_per_sekolah;
+                inputs.dropout_rate.value = data.dropout_rate;
+                sliders.dropout_rate.value = data.dropout_rate;
+                inputs.akses_internet.value = data.akses_internet;
+                sliders.akses_internet.value = data.akses_internet;
+                inputs.guru_s1.value = data.guru_s1;
+                sliders.guru_s1.value = data.guru_s1;
+                inputs.sekolah_lab.value = data.sekolah_lab;
+                sliders.sekolah_lab.value = data.sekolah_lab;
+                inputs.persebaran_sekolah.value = data.persebaran_sekolah;
+                sliders.persebaran_sekolah.value = data.persebaran_sekolah;
+                inputs.akses_sekolah.value = data.akses_sekolah;
+                sliders.akses_sekolah.value = data.akses_sekolah;
 
                 document.getElementById('selectedYear').textContent = currentYear;
-                document.getElementById('originalEQI').textContent = data.eqi;
 
                 simulationContent.classList.remove('hidden');
-                updateResults();
+                baselineEqi = null;
+                runSimulation(true);
             }
 
             function generateDefaultData() {
                 return {
-                    rls: 7.2,
-                    apsSD: 95,
-                    apsSMP: 82,
-                    apsSMA: 65,
-                    apkSD: 105,
-                    apkSMP: 88,
-                    apkSMA: 67,
-                    literacy: 85,
-                    teacherRatio: 18,
-                    passRate: 88,
-                    eqi: 72
+                    aps: 80,
+                    apk: 86,
+                    ruang_kelas_layak: 70,
+                    rata_lama_sekolah: 7.2,
+                    rasio_guru_siswa: 18,
+                    siswa_per_sekolah: 430,
+                    dropout_rate: 3.0,
+                    akses_internet: 74,
+                    guru_s1: 62,
+                    sekolah_lab: 50,
+                    persebaran_sekolah: 66,
+                    akses_sekolah: 70
+                };
+            }
+            function scheduleSimulation() {
+                if (!currentRegion || !currentYear) {
+                    return;
+                }
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => runSimulation(false), 350);
+            }
+
+            function buildApiPayload() {
+                return {
+                    aps: parseFloat(inputs.aps.value),
+                    apk: parseFloat(inputs.apk.value),
+                    ruang_kelas_layak: parseFloat(inputs.ruang_kelas_layak.value),
+                    rata_lama_sekolah: parseFloat(inputs.rls.value),
+                    rasio_guru_siswa: parseFloat(inputs.rasio_guru_siswa.value),
+                    siswa_per_sekolah: parseFloat(inputs.siswa_per_sekolah.value),
+                    dropout_rate: parseFloat(inputs.dropout_rate.value),
+                    akses_internet: parseFloat(inputs.akses_internet.value),
+                    guru_s1: parseFloat(inputs.guru_s1.value),
+                    sekolah_lab: parseFloat(inputs.sekolah_lab.value),
+                    persebaran_sekolah: parseFloat(inputs.persebaran_sekolah.value),
+                    akses_sekolah: parseFloat(inputs.akses_sekolah.value)
                 };
             }
 
-            function calculateEQI(data) {
-                // Normalized weights for each factor
-                const weights = {
-                    rls: 0.15,
-                    aps: 0.20,
-                    apk: 0.20,
-                    literacy: 0.15,
-                    teacherRatio: 0.10,
-                    passRate: 0.20
+            function buildSensitivityPayload(currentData) {
+                return {
+                    'aps': currentData.aps,
+                    'apk': currentData.apk,
+                    'ruang_kelas_layak_(%)': currentData.ruang_kelas_layak,
+                    'rata"_lama_sekolah_(tahun)': currentData.rata_lama_sekolah,
+                    'rasio_guru_siswa': currentData.rasio_guru_siswa,
+                    'siswa_per_sekolah': currentData.siswa_per_sekolah,
+                    'dropout_rate': currentData.dropout_rate,
+                    'akses_internet(%)': currentData.akses_internet,
+                    'guru_s1(%)': currentData.guru_s1,
+                    'sekolah_lab(%)': currentData.sekolah_lab,
+                    'persebaran_sekolah': currentData.persebaran_sekolah,
+                    'akses_sekolah': currentData.akses_sekolah
                 };
-
-                // Normalize values to 0-100 scale
-                const normalizedRLS = (data.rls / 15) * 100;
-                const normalizedAPS = ((data.apsSD + data.apsSMP + data.apsSMA) / 3) / 100 * 100;
-                const normalizedAPK = ((data.apkSD + data.apkSMP + data.apkSMA) / 3) / 100 * 100;
-                const normalizedLiteracy = data.literacy;
-                const normalizedTeacherRatio = ((50 - data.teacherRatio) / 45) * 100; // Lower ratio is better
-                const normalizedPassRate = data.passRate;
-
-                // Calculate EQI
-                const eqi = (
-                    normalizedRLS * weights.rls +
-                    normalizedAPS * weights.aps +
-                    normalizedAPK * weights.apk +
-                    normalizedLiteracy * weights.literacy +
-                    normalizedTeacherRatio * weights.teacherRatio +
-                    normalizedPassRate * weights.passRate
-                ) / 100;
-
-                return Math.min(100, Math.max(0, eqi));
             }
 
-            function getFactorInfluence(data) {
-                // Calculate sensitivity of each factor
-                const baseEQI = calculateEQI(data);
-                const influences = {};
+            async function runSimulation(isBaseline) {
+                const currentData = buildApiPayload();
 
-                const testIncrease = 5;
+                const result = await postJson(apiEndpoints.hitungEqi, {
+                    kabupaten_kota: currentRegion,
+                    ...currentData
+                });
 
-                // Test RLS
-                let testData = JSON.parse(JSON.stringify(data));
-                testData.rls = Math.min(15, data.rls + testIncrease);
-                influences.rls = Math.abs(calculateEQI(testData) - baseEQI);
+                if (!result || !result.success) {
+                    return;
+                }
 
-                // Test APS
-                testData = JSON.parse(JSON.stringify(data));
-                testData.apsSD = Math.min(100, data.apsSD + testIncrease);
-                influences.aps = Math.abs(calculateEQI(testData) - baseEQI);
+                const stored = result.data || {};
+                const newEQI = stored.eqi_score ?? 0;
 
-                // Test APK
-                testData = JSON.parse(JSON.stringify(data));
-                testData.apkSD = Math.min(100, data.apkSD + testIncrease);
-                influences.apk = Math.abs(calculateEQI(testData) - baseEQI);
+                if (isBaseline || baselineEqi === null) {
+                    baselineEqi = newEQI;
+                    document.getElementById('originalEQI').textContent = newEQI.toFixed(1);
+                }
 
-                // Test Literacy
-                testData = JSON.parse(JSON.stringify(data));
-                testData.literacy = Math.min(100, data.literacy + testIncrease);
-                influences.literacy = Math.abs(calculateEQI(testData) - baseEQI);
-
-                // Test Teacher Ratio
-                testData = JSON.parse(JSON.stringify(data));
-                testData.teacherRatio = Math.max(5, data.teacherRatio - testIncrease / 10);
-                influences.teacherRatio = Math.abs(calculateEQI(testData) - baseEQI);
-
-                // Test Pass Rate
-                testData = JSON.parse(JSON.stringify(data));
-                testData.passRate = Math.min(100, data.passRate + testIncrease);
-                influences.passRate = Math.abs(calculateEQI(testData) - baseEQI);
-
-                return influences;
-            }
-
-            function updateResults() {
-                const currentData = {
-                    rls: parseFloat(inputs.rls.value),
-                    apsSD: parseFloat(inputs.apsSD.value),
-                    apsSMP: parseFloat(inputs.apsSMP.value),
-                    apsSMA: parseFloat(inputs.apsSMA.value),
-                    apkSD: parseFloat(inputs.apkSD.value),
-                    apkSMP: parseFloat(inputs.apkSMP.value),
-                    apkSMA: parseFloat(inputs.apkSMA.value),
-                    literacy: parseFloat(inputs.literacy.value),
-                    teacherRatio: parseFloat(inputs.teacherRatio.value),
-                    passRate: parseFloat(inputs.passRate.value)
-                };
-
-                const newEQI = calculateEQI(currentData);
-                const originalEQI = originalData.eqi;
-                const difference = newEQI - originalEQI;
-                const differencePercent = (difference / originalEQI) * 100;
+                const difference = newEQI - baselineEqi;
+                const differencePercent = baselineEqi === 0 ? 0 : (difference / baselineEqi) * 100;
 
                 // Update EQI display
                 document.getElementById('currentEQI').textContent = newEQI.toFixed(1);
-                document.getElementById('eqiBar').style.width = (newEQI) + '%';
+                document.getElementById('eqiBar').style.width = newEQI + '%';
 
                 // Update difference
                 document.getElementById('eqiDifference').innerHTML = `<span>${difference.toFixed(1)}</span><span class="text-lg text-slate-500">/100</span>`;
@@ -648,49 +676,26 @@
                 }
 
                 // Update quality rank
-                let rank, color;
-                if (newEQI >= 80) {
-                    rank = 'Sangat Tinggi';
-                    color = '#10b981';
-                } else if (newEQI >= 60) {
-                    rank = 'Tinggi';
-                    color = '#34d399';
-                } else if (newEQI >= 40) {
-                    rank = 'Sedang';
-                    color = '#f59e0b';
-                } else if (newEQI >= 20) {
-                    rank = 'Rendah';
-                    color = '#fb923c';
-                } else {
-                    rank = 'Sangat Rendah';
-                    color = '#ef4444';
-                }
-                document.getElementById('qualityRank').textContent = rank;
-                document.getElementById('qualityBar').style.backgroundColor = color;
+                document.getElementById('qualityRank').textContent = stored.kategori || '-';
+                document.getElementById('qualityBar').style.backgroundColor = stored.warna || '#1E3A8A';
                 document.getElementById('qualityBar').style.width = newEQI + '%';
 
-                // Update factor influence ranking
-                const influences = getFactorInfluence(currentData);
-                const sorted = Object.entries(influences).sort((a, b) => b[1] - a[1]);
+                const sensitivity = await postJson(apiEndpoints.sensitivity, {
+                    data_kabupaten: buildSensitivityPayload(currentData),
+                    perubahan: 5
+                });
 
-                const factorNames = {
-                    'rls': 'Rata-rata Lama Sekolah',
-                    'aps': 'Angka Partisipasi Sekolah',
-                    'apk': 'Angka Partisipasi Kasar',
-                    'literacy': 'Tingkat Literasi',
-                    'teacherRatio': 'Rasio Murid/Guru',
-                    'passRate': 'Tingkat Kelulusan'
-                };
-
-                const colors = ['#10b981', '#f59e0b', '#ef4444'];
-                for (let i = 0; i < 3; i++) {
-                    if (sorted[i]) {
-                        const factor = sorted[i][0];
-                        const value = sorted[i][1];
-                        const maxValue = Math.max(...Object.values(influences));
-                        const percentage = (value / maxValue) * 100;
-
-                        document.getElementById(`factor${i + 1}Name`).textContent = factorNames[factor];
+                if (sensitivity && sensitivity.success && sensitivity.data && Array.isArray(sensitivity.data.hasil)) {
+                    const colors = ['#10b981', '#f59e0b', '#ef4444'];
+                    const maxDelta = Math.max(...sensitivity.data.hasil.map(item => Math.abs(item.delta_eqi || 0)), 1);
+                    const topThree = sensitivity.data.hasil.slice(0, 3);
+                    for (let i = 0; i < 3; i++) {
+                        const item = topThree[i];
+                        if (!item) {
+                            continue;
+                        }
+                        const percentage = (Math.abs(item.delta_eqi || 0) / maxDelta) * 100;
+                        document.getElementById(`factor${i + 1}Name`).textContent = item.label || item.fitur || '-';
                         document.getElementById(`factor${i + 1}Value`).textContent = percentage.toFixed(0) + '%';
                         document.getElementById(`factor${i + 1}Bar`).style.width = percentage + '%';
                         document.getElementById(`factor${i + 1}Bar`).style.backgroundColor = colors[i];
@@ -698,29 +703,25 @@
                 }
 
                 // Update comparison chart
-                document.getElementById('compRLS').textContent = originalData.rls;
-                document.getElementById('compRLSNew').textContent = currentData.rls.toFixed(1);
-                document.getElementById('compBarRLS').style.width = (originalData.rls / 15) * 100 + '%';
-                document.getElementById('compBarRLSNew').style.width = (currentData.rls / 15) * 100 + '%';
+                document.getElementById('compRLS').textContent = originalData.rata_lama_sekolah;
+                document.getElementById('compRLSNew').textContent = currentData.rata_lama_sekolah.toFixed(1);
+                document.getElementById('compBarRLS').style.width = (originalData.rata_lama_sekolah / 20) * 100 + '%';
+                document.getElementById('compBarRLSNew').style.width = (currentData.rata_lama_sekolah / 20) * 100 + '%';
 
-                const avgAPS = (originalData.apsSD + originalData.apsSMP + originalData.apsSMA) / 3;
-                const avgAPSNew = (currentData.apsSD + currentData.apsSMP + currentData.apsSMA) / 3;
-                document.getElementById('compAPS').textContent = avgAPS.toFixed(0);
-                document.getElementById('compAPSNew').textContent = avgAPSNew.toFixed(1);
-                document.getElementById('compBarAPS').style.width = avgAPS + '%';
-                document.getElementById('compBarAPSNew').style.width = avgAPSNew + '%';
+                document.getElementById('compAPS').textContent = originalData.aps.toFixed(0);
+                document.getElementById('compAPSNew').textContent = currentData.aps.toFixed(1);
+                document.getElementById('compBarAPS').style.width = originalData.aps + '%';
+                document.getElementById('compBarAPSNew').style.width = currentData.aps + '%';
 
-                const avgAPK = (originalData.apkSD + originalData.apkSMP + originalData.apkSMA) / 3;
-                const avgAPKNew = (currentData.apkSD + currentData.apkSMP + currentData.apkSMA) / 3;
-                document.getElementById('compAPK').textContent = avgAPK.toFixed(0);
-                document.getElementById('compAPKNew').textContent = avgAPKNew.toFixed(1);
-                document.getElementById('compBarAPK').style.width = Math.min(100, avgAPK) + '%';
-                document.getElementById('compBarAPKNew').style.width = Math.min(100, avgAPKNew) + '%';
+                document.getElementById('compAPK').textContent = originalData.apk.toFixed(0);
+                document.getElementById('compAPKNew').textContent = currentData.apk.toFixed(1);
+                document.getElementById('compBarAPK').style.width = Math.min(100, originalData.apk) + '%';
+                document.getElementById('compBarAPKNew').style.width = Math.min(100, currentData.apk) + '%';
 
-                document.getElementById('compLiteracy').textContent = originalData.literacy;
-                document.getElementById('compLiteracyNew').textContent = currentData.literacy.toFixed(1);
-                document.getElementById('compBarLiteracy').style.width = originalData.literacy + '%';
-                document.getElementById('compBarLiteracyNew').style.width = currentData.literacy + '%';
+                document.getElementById('compAkses').textContent = originalData.akses_internet.toFixed(0);
+                document.getElementById('compAksesNew').textContent = currentData.akses_internet.toFixed(1);
+                document.getElementById('compBarAkses').style.width = originalData.akses_internet + '%';
+                document.getElementById('compBarAksesNew').style.width = currentData.akses_internet + '%';
             }
         </script>
     </body>

@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'ml_api' => [
+        'url' => env('ML_SERVICE'),
+    ],
+
 ];

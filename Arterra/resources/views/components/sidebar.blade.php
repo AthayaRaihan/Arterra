@@ -3,7 +3,7 @@
         $isDashboard = Route::is('dashboard');
         $isEqi = Route::is('eqi');
         $isPrediction = Route::is('prediction');
-        $isSimulation = Route::is('simulation');
+        $isSimulation = Route::is('simulation.index');
     @endphp
     <div class="px-6 pt-7 pb-5">
         <div class="flex items-center gap-3">
@@ -51,7 +51,7 @@
                     Prediction
                 </span>
             </a>
-            <a class="group px-3 py-2 rounded-xl {{ $isSimulation ? 'bg-[#14B8A6] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#14B8A6]/10 hover:text-[#0F766E] transition' }}" href="{{ route('simulation') }}">
+            <a class="group px-3 py-2 rounded-xl {{ $isSimulation ? 'bg-[#14B8A6] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#14B8A6]/10 hover:text-[#0F766E] transition' }}" href="{{ route('simulation.index') }}">
                 <span class="flex items-center gap-2">
                     <span class="flex h-7 w-7 items-center justify-center rounded-lg {{ $isSimulation ? 'bg-white/15 text-white' : 'bg-[#14B8A6]/10 text-[#0F766E]' }}">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

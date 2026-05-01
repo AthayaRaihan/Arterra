@@ -51,9 +51,9 @@
                     Prediction
                 </span>
             </a>
-            <a class="group px-3 py-2 rounded-xl {{ $isSimulation ? 'bg-[#1D4ED8] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#1D4ED8]/10 hover:text-[#1D4ED8] transition' }}" href="{{ route('simulation') }}">
+            <a class="group px-3 py-2 rounded-xl {{ $isSimulation ? 'bg-[#14B8A6] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#14B8A6]/10 hover:text-[#0F766E] transition' }}" href="{{ route('simulation') }}">
                 <span class="flex items-center gap-2">
-                    <span class="flex h-7 w-7 items-center justify-center rounded-lg {{ $isSimulation ? 'bg-white/15 text-white' : 'bg-[#1D4ED8]/10 text-[#1D4ED8]' }}">
+                    <span class="flex h-7 w-7 items-center justify-center rounded-lg {{ $isSimulation ? 'bg-white/15 text-white' : 'bg-[#14B8A6]/10 text-[#0F766E]' }}">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                             <path d="M4 12H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />

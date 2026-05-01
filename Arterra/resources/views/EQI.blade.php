@@ -8,6 +8,7 @@
 
 		<link rel="preconnect" href="https://fonts.bunny.net">
 		<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
 	</head>
@@ -38,42 +39,42 @@
 								<p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Pilih Kabupaten/Kota</p>
 								<div class="mt-3 flex flex-wrap items-center gap-4">
 									<div class="relative">
-										<select id="regionSelect" class="w-56 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-10 text-sm font-semibold text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none">
-											<option value="Cilacap" selected>Kab. Cilacap</option>
-											<option value="Banyumas">Kab. Banyumas</option>
-											<option value="Purbalingga">Kab. Purbalingga</option>
-											<option value="Semarang">Kab. Banjarnegara</option>
-											<option value="Surakarta">Kab. Kebumen</option>
-											<option value="Surakarta">Kab. Purworejo</option>
-											<option value="Surakarta">Kab. Wonosobo</option>
-											<option value="Surakarta">Kab. Magelang</option>
-											<option value="Surakarta">Kab. Boyolali</option>
-											<option value="Surakarta">Kab. Klaten</option>
-											<option value="Surakarta">Kab. Sukoharjo</option>
-											<option value="Surakarta">Kab. Wonogiri</option>
-											<option value="Surakarta">Kab. Karanganyar</option>
-											<option value="Surakarta">Kab. Sragen</option>
-											<option value="Surakarta">Kab. Grobogan</option>
-											<option value="Surakarta">Kab. Blora</option>
-											<option value="Surakarta">Kab. Rembang</option>
-											<option value="Surakarta">Kab. Pati</option>
-											<option value="Surakarta">Kab. Kudus</option>
-											<option value="Surakarta">Kab. Jepara</option>
-											<option value="Surakarta">Kab. Demak</option>
-											<option value="Surakarta">Kab. Semarang</option>
-											<option value="Surakarta">Kab. Temanggung</option>
-											<option value="Surakarta">Kab. Kendal</option>
-											<option value="Surakarta">Kab. Batang</option>
-											<option value="Surakarta">Kab. Pekalongan</option>
-											<option value="Surakarta">Kab. Pemalang</option>
-											<option value="Surakarta">Kab. Tegal</option>
-											<option value="Surakarta">Kab. Brebes</option>
-											<option value="Surakarta">Kota Magelang</option>
-											<option value="Surakarta">Kota Surakarta</option>
-											<option value="Surakarta">Kota Salatiga</option>
-											<option value="Surakarta">Kota Semarang</option>
-											<option value="Surakarta">Kota Pekalongan</option>
-											<option value="Surakarta">Kota Tegal</option>
+										<select id="regionSelect" class="w-56 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-10 text-sm font-semibold text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none relative z-10">
+											<option value="Cilacap" data-lat="-7.6402" data-lng="109.0069" selected>Kab. Cilacap</option>
+											<option value="Banyumas" data-lat="-7.4646" data-lng="109.0202">Kab. Banyumas</option>
+											<option value="Purbalingga" data-lat="-7.3005" data-lng="109.3496">Kab. Purbalingga</option>
+											<option value="Banjarnegara" data-lat="-7.3912" data-lng="109.6896">Kab. Banjarnegara</option>
+											<option value="Kebumen" data-lat="-7.6698" data-lng="109.6508">Kab. Kebumen</option>
+											<option value="Purworejo" data-lat="-7.7027" data-lng="109.9984">Kab. Purworejo</option>
+											<option value="Wonosobo" data-lat="-7.3619" data-lng="109.8978">Kab. Wonosobo</option>
+											<option value="Magelang" data-lat="-7.5029" data-lng="110.2223">Kab. Magelang</option>
+											<option value="Boyolali" data-lat="-7.5186" data-lng="110.6019">Kab. Boyolali</option>
+											<option value="Klaten" data-lat="-7.7126" data-lng="110.6053">Kab. Klaten</option>
+											<option value="Sukoharjo" data-lat="-7.6826" data-lng="110.8353">Kab. Sukoharjo</option>
+											<option value="Wonogiri" data-lat="-7.8821" data-lng="111.0252">Kab. Wonogiri</option>
+											<option value="Karanganyar" data-lat="-7.6322" data-lng="111.0264">Kab. Karanganyar</option>
+											<option value="Sragen" data-lat="-7.4206" data-lng="110.9892">Kab. Sragen</option>
+											<option value="Grobogan" data-lat="-7.0984" data-lng="110.9322">Kab. Grobogan</option>
+											<option value="Blora" data-lat="-7.0252" data-lng="111.4552">Kab. Blora</option>
+											<option value="Rembang" data-lat="-6.7905" data-lng="111.4589">Kab. Rembang</option>
+											<option value="Pati" data-lat="-6.7570" data-lng="111.0375">Kab. Pati</option>
+											<option value="Kudus" data-lat="-6.8048" data-lng="110.8405">Kab. Kudus</option>
+											<option value="Jepara" data-lat="-6.5861" data-lng="110.6698">Kab. Jepara</option>
+											<option value="Demak" data-lat="-6.8953" data-lng="110.6385">Kab. Demak</option>
+											<option value="Semarang" data-lat="-7.1852" data-lng="110.4284">Kab. Semarang</option>
+											<option value="Temanggung" data-lat="-7.3117" data-lng="110.1557">Kab. Temanggung</option>
+											<option value="Kendal" data-lat="-7.0310" data-lng="110.1654">Kab. Kendal</option>
+											<option value="Batang" data-lat="-7.0097" data-lng="109.8453">Kab. Batang</option>
+											<option value="Pekalongan" data-lat="-7.0673" data-lng="109.6105">Kab. Pekalongan</option>
+											<option value="Pemalang" data-lat="-7.0392" data-lng="109.4312">Kab. Pemalang</option>
+											<option value="Tegal" data-lat="-7.0381" data-lng="109.1677">Kab. Tegal</option>
+											<option value="Brebes" data-lat="-7.0422" data-lng="108.9172">Kab. Brebes</option>
+											<option value="Kota Magelang" data-lat="-7.4728" data-lng="110.2223">Kota Magelang</option>
+											<option value="Kota Surakarta" data-lat="-7.5561" data-lng="110.8317">Kota Surakarta</option>
+											<option value="Kota Salatiga" data-lat="-7.3305" data-lng="110.5084">Kota Salatiga</option>
+											<option value="Kota Semarang" data-lat="-7.0051" data-lng="110.4381">Kota Semarang</option>
+											<option value="Kota Pekalongan" data-lat="-6.8898" data-lng="109.6773">Kota Pekalongan</option>
+											<option value="Kota Tegal" data-lat="-6.8797" data-lng="109.1256">Kota Tegal</option>
 										</select>
 										<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
 											<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +84,7 @@
 									</div>
 									<div class="rounded-2xl bg-[#F8FAFC] px-4 py-3">
 										<p class="text-xs text-slate-500">Kabupaten terpilih</p>
-										<p id="selectedRegion" class="text-lg font-semibold text-[#1E3A8A]">Cilacap</p>
+										<p id="selectedRegion" class="text-lg font-semibold text-[#1E3A8A]">Kab. Cilacap</p>
 									</div>
 								</div>
 								<p class="mt-3 text-sm text-slate-500">Pilih wilayah untuk melihat ringkasan EQI, tren lima tahun, dan peta visualisasi.</p>
@@ -141,21 +142,11 @@
 								<div class="flex items-start justify-between">
 									<div>
 										<h2 class="text-lg font-semibold">Peta Kabupaten Terpilih</h2>
-										<p class="mt-1 text-sm text-slate-500">Highlight wilayah berdasarkan kategori EQI.</p>
+										<p class="mt-1 text-sm text-slate-500">Menampilkan wilayah kabupaten/kota di Jawa Tengah.</p>
 									</div>
 								</div>
-								<div class="mt-4 overflow-hidden rounded-2xl border border-dashed border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-100">
-									<div class="flex h-72 items-center justify-center">
-										<div class="text-center">
-											<span id="mapRegion" class="inline-flex items-center justify-center rounded-2xl bg-[#1E3A8A]/10 px-3 py-2 text-sm font-semibold text-[#1E3A8A]">Cilacap</span>
-											<p class="mt-2 text-xs text-slate-500">Peta interaktif akan ditampilkan di sini</p>
-											<div class="mt-4 flex items-center justify-center gap-4 text-xs text-slate-500">
-												<span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-[#4CAF50]"></span>Hijau = tinggi</span>
-												<span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-[#FACC15]"></span>Kuning = sedang</span>
-												<span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-[#EF4444]"></span>Merah = rendah</span>
-											</div>
-										</div>
-									</div>
+								<div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 relative">
+									<div id="map" class="h-[500px] w-full z-0 relative"></div>
 								</div>
 							</div>
 
@@ -212,5 +203,68 @@
 			</main>
 		</div>
 		
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				var map = L.map('map').setView([-7.6402, 109.0069], 10);
+				
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					maxZoom: 19,
+				}).addTo(map);
+
+				var regionSelect = document.getElementById('regionSelect');
+				var selectedRegionText = document.getElementById('selectedRegion');
+				var currentLayer = null;
+
+				function loadRegionBoundary(name, fallbackLat, fallbackLng) {
+					var searchName = name.replace('Kab.', 'Kabupaten') + ', Jawa Tengah';
+					
+					fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(searchName) + '&format=json&polygon_geojson=1&limit=1')
+						.then(response => response.json())
+						.then(data => {
+							if (currentLayer) {
+								map.removeLayer(currentLayer);
+							}
+
+							if (data && data.length > 0 && data[0].geojson && (data[0].geojson.type === 'Polygon' || data[0].geojson.type === 'MultiPolygon')) {
+								currentLayer = L.geoJSON(data[0].geojson, {
+									style: {
+										color: '#ef4444', // Red border
+										weight: 2,
+										opacity: 1,
+										fillColor: '#000000',
+										fillOpacity: 0.1
+									}
+								}).addTo(map);
+
+								map.fitBounds(currentLayer.getBounds());
+							} else {
+								// Fallback to marker if polygon not found
+								map.setView([fallbackLat, fallbackLng], 10);
+								currentLayer = L.marker([fallbackLat, fallbackLng]).bindPopup("<b>" + name + "</b>").addTo(map).openPopup();
+							}
+						})
+						.catch(error => {
+							console.error('Error fetching region boundary:', error);
+							if (currentLayer) map.removeLayer(currentLayer);
+							map.setView([fallbackLat, fallbackLng], 10);
+							currentLayer = L.marker([fallbackLat, fallbackLng]).bindPopup("<b>" + name + "</b>").addTo(map).openPopup();
+						});
+				}
+
+				// Initial load
+				loadRegionBoundary('Kab. Cilacap', -7.6402, 109.0069);
+
+				regionSelect.addEventListener('change', function () {
+					var selectedOption = this.options[this.selectedIndex];
+					var lat = parseFloat(selectedOption.getAttribute('data-lat'));
+					var lng = parseFloat(selectedOption.getAttribute('data-lng'));
+					var name = selectedOption.text;
+
+					if (selectedRegionText) selectedRegionText.textContent = name;
+					loadRegionBoundary(name, lat, lng);
+				});
+			});
+		</script>
 	</body>
 </html>

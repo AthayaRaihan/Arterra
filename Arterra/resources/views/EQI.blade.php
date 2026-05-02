@@ -1,421 +1,383 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }} - EQI</title>
+    <meta name="description" content="Peta Education Quality Index Jawa Tengah — visualisasi kualitas pendidikan 35 kabupaten/kota.">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        #map { height: 500px; width: 100%; }
+        .detail-card { transition: all 0.4s ease; }
+        .rank-item:hover { background: #f1f5f9; }
+        .bar-fill { transition: width 1s ease; }
+    </style>
+</head>
+<body class="bg-[#F3F6FB] text-[#0F172A]">
+<div class="min-h-screen">
+    <x-sidebar />
+    <main class="lg:pl-72">
+        <section class="relative overflow-hidden bg-[#F8FAFC] px-6 py-8 text-[#1F2937]">
+            <div class="pointer-events-none absolute inset-0">
+                <div class="absolute -top-32 right-10 h-64 w-64 rounded-full bg-[#1E3A8A]/12 blur-3xl"></div>
+                <div class="absolute bottom-0 left-10 h-48 w-48 rounded-full bg-[#4CAF50]/15 blur-3xl"></div>
+            </div>
+            <div class="relative">
+                <header class="flex flex-wrap items-start justify-between gap-6">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Jawa Tengah</p>
+                        <h1 class="mt-2 text-3xl font-semibold">Analisis Education Quality Index (EQI)</h1>
+                        <p class="mt-2 max-w-2xl text-sm text-slate-600">Visualisasi persebaran kualitas pendidikan berdasarkan EQI score antar kabupaten/kota.</p>
+                    </div>
+                    <div>
+                        <button id="btnRefresh" onclick="refreshEqi()" class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Hitung Ulang EQI
+                        </button>
+                    </div>
+                </header>
 
-		<title>{{ config('app.name', 'Laravel') }} - EQI</title>
+                {{-- MAP SECTION --}}
+                <section class="mt-6">
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h2 class="text-lg font-semibold text-[#1E3A8A]">Peta Persebaran Kualitas Pendidikan</h2>
+                                <p class="text-sm text-slate-500">Warna berdasarkan EQI Score (Hijau = Tinggi, Merah = Rendah)</p>
+                            </div>
+                            <div class="relative">
+                                <select id="regionSelect" class="w-56 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-10 text-sm font-semibold text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none relative z-10">
+                                    <option value="">Semua Wilayah</option>
+                                </select>
+                                <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </span>
+                            </div>
+                        </div>
 
-		<link rel="preconnect" href="https://fonts.bunny.net">
-		<link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+                        <div id="loadingOverlay" class="mt-4 flex items-center justify-center h-24 text-slate-500 text-sm gap-2">
+                            <svg class="animate-spin h-5 w-5 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                            Memuat data EQI...
+                        </div>
 
-		@vite(['resources/css/app.css', 'resources/js/app.js'])
-	</head>
-	<body class="bg-[#F3F6FB] text-[#0F172A]">
-		<div class="min-h-screen">
-			<x-sidebar />
-			<main class="lg:pl-72">
-				<section class="relative overflow-hidden bg-[#F8FAFC] px-6 py-8 text-[#1F2937]">
-					<div class="pointer-events-none absolute inset-0">
-						<div class="absolute -top-32 right-10 h-64 w-64 rounded-full bg-[#1E3A8A]/12 blur-3xl"></div>
-						<div class="absolute bottom-0 left-10 h-48 w-48 rounded-full bg-[#4CAF50]/15 blur-3xl"></div>
-					</div>
-					<div class="relative">
-						<header class="flex flex-wrap items-start justify-between gap-6">
-							<div>
-								<p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Jawa Tengah</p>
-								<h1 class="mt-2 text-3xl font-semibold">Analisis Education Quality Index (EQI)</h1>
-								<p class="mt-2 max-w-2xl text-sm text-slate-600">Visualisasi persebaran kualitas pendidikan berdasarkan ranking relatif antar kabupaten/kota.</p>
-							</div>
-						</header>
+                        <div id="mapWrapper" class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 relative hidden">
+                            <div id="map" class="z-0 relative"></div>
+                        </div>
 
-						<section class="mt-6">
-							<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-								<div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-									<div>
-										<h2 class="text-lg font-semibold text-[#1E3A8A]">Peta Persebaran Kualitas Pendidikan</h2>
-										<p class="text-sm text-slate-500">Tampilan berdasarkan ranking relatif (Hijau = Tinggi, Merah = Rendah)</p>
-									</div>
-									<div class="relative">
-										<select id="regionSelect" class="w-56 appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-10 text-sm font-semibold text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none relative z-10">
-											<option value="" selected>Semua Wilayah</option>
-											<option value="Cilacap">Kab. Cilacap</option>
-											<option value="Banyumas">Kab. Banyumas</option>
-											<option value="Purbalingga">Kab. Purbalingga</option>
-											<option value="Banjarnegara">Kab. Banjarnegara</option>
-											<option value="Kebumen">Kab. Kebumen</option>
-											<option value="Purworejo">Kab. Purworejo</option>
-											<option value="Wonosobo">Kab. Wonosobo</option>
-											<option value="Magelang">Kab. Magelang</option>
-											<option value="Boyolali">Kab. Boyolali</option>
-											<option value="Klaten">Kab. Klaten</option>
-											<option value="Sukoharjo">Kab. Sukoharjo</option>
-											<option value="Wonogiri">Kab. Wonogiri</option>
-											<option value="Karanganyar">Kab. Karanganyar</option>
-											<option value="Sragen">Kab. Sragen</option>
-											<option value="Grobogan">Kab. Grobogan</option>
-											<option value="Blora">Kab. Blora</option>
-											<option value="Rembang">Kab. Rembang</option>
-											<option value="Pati">Kab. Pati</option>
-											<option value="Kudus">Kab. Kudus</option>
-											<option value="Jepara">Kab. Jepara</option>
-											<option value="Demak">Kab. Demak</option>
-											<option value="Semarang">Kab. Semarang</option>
-											<option value="Temanggung">Kab. Temanggung</option>
-											<option value="Kendal">Kab. Kendal</option>
-											<option value="Batang">Kab. Batang</option>
-											<option value="Pekalongan">Kab. Pekalongan</option>
-											<option value="Pemalang">Kab. Pemalang</option>
-											<option value="Tegal">Kab. Tegal</option>
-											<option value="Brebes">Kab. Brebes</option>
-											<option value="Kota Magelang">Kota Magelang</option>
-											<option value="Kota Surakarta">Kota Surakarta</option>
-											<option value="Kota Salatiga">Kota Salatiga</option>
-											<option value="Kota Semarang">Kota Semarang</option>
-											<option value="Kota Pekalongan">Kota Pekalongan</option>
-											<option value="Kota Tegal">Kota Tegal</option>
-										</select>
-										<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-											<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-											</svg>
-										</span>
-									</div>
-								</div>
-								
-								<div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 relative">
-									<div id="map" class="h-[500px] w-full z-0 relative"></div>
-								</div>
-                                
-                                <div class="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-slate-600">
-                                    <span>Kualitas Relatif Rendah</span>
-                                    <div class="h-3 w-64 rounded-full" style="background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);"></div>
-                                    <span>Kualitas Relatif Tinggi</span>
-                                </div>
-							</div>
-						</section>
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-slate-600">
+                            <span>EQI Rendah</span>
+                            <div class="h-3 w-64 rounded-full" style="background: linear-gradient(to right, #ef4444, #f59e0b, #22c55e);"></div>
+                            <span>EQI Tinggi</span>
+                        </div>
+                    </div>
+                </section>
 
-						<section id="detailSection" class="mt-6 hidden transition-all duration-500">
-							<div class="mb-4">
-								<h2 id="detailRegionName" class="text-2xl font-bold text-[#1F2937]">Kabupaten Terpilih</h2>
-								<p class="text-sm text-slate-500">Detail indikator pendidikan (Data Simulasi)</p>
-							</div>
+                {{-- DETAIL SECTION --}}
+                <section id="detailSection" class="mt-6 hidden">
+                    <div class="mb-4">
+                        <h2 id="detailRegionName" class="text-2xl font-bold text-[#1F2937]">Kabupaten Terpilih</h2>
+                        <p class="text-sm text-slate-500">Detail 12 indikator pendidikan</p>
+                    </div>
 
-							<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-								<!-- Card 1 -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-									<p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Rata-rata Lama Sekolah</p>
-									<p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valRLS">7.5</span> <span class="text-sm font-medium text-slate-500">Tahun</span></p>
-                                    <p class="mt-2 text-xs text-emerald-600 font-medium">↑ Di atas rata-rata provinsi</p>
-								</div>
-								
-                                <!-- Card 2 -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-									<p class="text-xs font-semibold uppercase tracking-wider text-slate-500">APS (Rata-rata)</p>
-									<p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valAPS">82.4</span>%</p>
-                                    <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-[#1E3A8A] rounded-full transition-all duration-1000" style="width: 82.4%"></div>
-                                    </div>
-								</div>
+                    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Rata-rata Lama Sekolah</p>
+                            <p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valRLS">-</span> <span class="text-sm font-medium text-slate-500">Tahun</span></p>
+                        </div>
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">APS (Rata-rata)</p>
+                            <p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valAPS">-</span>%</p>
+                            <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="barAPS" class="h-full bg-[#1E3A8A] rounded-full bar-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">APK (Rata-rata)</p>
+                            <p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valAPK">-</span>%</p>
+                            <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="barAPK" class="h-full bg-emerald-500 rounded-full bar-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Akses Internet</p>
+                            <p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valInternet">-</span>%</p>
+                            <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="barInternet" class="h-full bg-blue-500 rounded-full bar-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- Card 3 -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-									<p class="text-xs font-semibold uppercase tracking-wider text-slate-500">APK (Rata-rata)</p>
-									<p class="mt-2 text-3xl font-bold text-[#1F2937]"><span id="valAPK">85.1</span>%</p>
-                                    <div class="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000" style="width: 85.1%"></div>
-                                    </div>
-								</div>
+                    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                        {{-- Left: feature bars --}}
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-5">Indikator Kualitas Pendidikan</h3>
+                            <div class="space-y-4" id="featureBars"></div>
+                        </div>
 
-                                <!-- Card 4 -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex items-center gap-4">
-									<div class="flex-1">
-                                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Sekolah</p>
-									    <p class="mt-1 text-3xl font-bold text-[#1F2937]" id="valSekolah">1,240</p>
-                                    </div>
-                                    <div class="h-12 w-12 rounded-full bg-[#4CAF50]/15 text-[#2E7D32] flex items-center justify-center">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                    </div>
-								</div>
-							</div>
+                        {{-- Right: more indicators --}}
+                        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <h3 class="text-sm font-semibold text-slate-700 mb-5">Indikator Infrastruktur & SDM</h3>
+                            <div class="space-y-4" id="infraBars"></div>
+                        </div>
+                    </div>
+                </section>
 
-							<div class="mt-6 grid gap-6 lg:grid-cols-2">
-								<!-- Bar Chart -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-									<h3 class="text-sm font-semibold text-slate-700">Perbandingan APS & APK per Jenjang</h3>
-                                    <div class="mt-6 space-y-5">
-                                        <!-- SD -->
-                                        <div>
-                                            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1">
-                                                <span>SD/Sederajat</span>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-[10px] w-6 text-slate-400">APS</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-[#1E3A8A] rounded-full transition-all duration-1000" id="barApsSD" style="width: 98%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApsSD">98%</span>
-                                            </div>
-                                            <div class="flex items-center gap-3 mt-1.5">
-                                                <span class="text-[10px] w-6 text-slate-400">APK</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000" id="barApkSD" style="width: 102%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApkSD">102%</span>
-                                            </div>
-                                        </div>
-                                        <!-- SMP -->
-                                        <div>
-                                            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1">
-                                                <span>SMP/Sederajat</span>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-[10px] w-6 text-slate-400">APS</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-[#1E3A8A] rounded-full transition-all duration-1000" id="barApsSMP" style="width: 85%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApsSMP">85%</span>
-                                            </div>
-                                            <div class="flex items-center gap-3 mt-1.5">
-                                                <span class="text-[10px] w-6 text-slate-400">APK</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000" id="barApkSMP" style="width: 88%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApkSMP">88%</span>
-                                            </div>
-                                        </div>
-                                        <!-- SMA -->
-                                        <div>
-                                            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1">
-                                                <span>SMA/Sederajat</span>
-                                            </div>
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-[10px] w-6 text-slate-400">APS</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-[#1E3A8A] rounded-full transition-all duration-1000" id="barApsSMA" style="width: 65%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApsSMA">65%</span>
-                                            </div>
-                                            <div class="flex items-center gap-3 mt-1.5">
-                                                <span class="text-[10px] w-6 text-slate-400">APK</span>
-                                                <div class="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000" id="barApkSMA" style="width: 67%"></div>
-                                                </div>
-                                                <span class="text-xs font-semibold w-8 text-right" id="valApkSMA">67%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-								</div>
+                {{-- RANKING SECTION --}}
+                <section class="mt-6">
+                    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <h2 class="text-lg font-semibold text-[#1E3A8A] mb-1">Ranking EQI — 35 Kabupaten/Kota</h2>
+                        <p class="text-sm text-slate-500 mb-5">Diurutkan dari EQI tertinggi ke terendah</p>
+                        <div id="rankingList" class="divide-y divide-slate-100"></div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+</div>
 
-								<!-- Donut Chart -->
-								<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
-									<h3 class="text-sm font-semibold text-slate-700">Persebaran Jumlah Sekolah</h3>
-                                    <div class="flex-1 flex items-center justify-center mt-4">
-                                        <div class="relative h-48 w-48 rounded-full transition-all duration-1000" id="sekolahDonut" style="background: conic-gradient(#10b981 0% 60%, #f59e0b 60% 85%, #ef4444 85% 100%);">
-                                            <div class="absolute inset-4 rounded-full bg-white flex items-center justify-center flex-col">
-                                                <span class="text-2xl font-bold text-[#1F2937]" id="valSekolahDonut">1,240</span>
-                                                <span class="text-[10px] uppercase font-bold text-slate-400">Total</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs font-medium">
-                                        <div class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-emerald-500"></span> SD (<span id="pctSD">60</span>%)</div>
-                                        <div class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-amber-500"></span> SMP (<span id="pctSMP">25</span>%)</div>
-                                        <div class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-red-500"></span> SMA (<span id="pctSMA">15</span>%)</div>
-                                    </div>
-								</div>
-							</div>
-						</section>
-					</div>
-				</section>
-			</main>
-		</div>
-		
-		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-				var map = L.map('map').setView([-7.1509, 110.1402], 8);
-				
-				L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-					maxZoom: 19
-				}).addTo(map);
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function () {
+    /* ── State ──────────────────────────────────────────────────────────── */
+    let eqiData  = [];   // array of kabupaten objects from /api/eqi-data
+    let mapData  = null; // GeoJSON
+    let map, geoJsonLayer;
 
-				var regionSelect = document.getElementById('regionSelect');
-                var detailSection = document.getElementById('detailSection');
-                var detailRegionName = document.getElementById('detailRegionName');
-                
-                var geoJsonLayer;
-                var mapData = null;
+    const regionSelect  = document.getElementById('regionSelect');
+    const detailSection = document.getElementById('detailSection');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const mapWrapper    = document.getElementById('mapWrapper');
 
-                function getColor(rank) {
-                    if(rank > 80) return '#10b981';
-                    if(rank > 60) return '#34d399';
-                    if(rank > 40) return '#fbbf24';
-                    if(rank > 20) return '#fb923c';
-                    return '#ef4444';
+    /* ── Color helper: EQI 0-100 → HSL hex (red→yellow→green) ─────────── */
+    function eqiColor(score) {
+        const s = Math.max(0, Math.min(100, score || 0));
+        const hue = Math.round((s / 100) * 142); // 0=red, 142=green
+        return `hsl(${hue},80%,42%)`;
+    }
+
+    /* ── Build a bar row ─────────────────────────────────────────────────── */
+    function barRow(label, value, max, color) {
+        const pct = Math.min(100, (value / max) * 100).toFixed(1);
+        return `<div>
+            <div class="flex justify-between text-xs text-slate-600 mb-1">
+                <span class="font-medium">${label}</span>
+                <span class="font-semibold">${value}</span>
+            </div>
+            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full bar-fill" style="width:${pct}%;background:${color}"></div>
+            </div>
+        </div>`;
+    }
+
+    /* ── Show detail panel for a kabupaten ───────────────────────────────── */
+    function showDetail(d) {
+        detailSection.classList.remove('hidden');
+        document.getElementById('detailRegionName').textContent = d.nama;
+
+        document.getElementById('valRLS').textContent = d.rls;
+        document.getElementById('valAPS').textContent = d.aps;
+        document.getElementById('barAPS').style.width = Math.min(100, d.aps) + '%';
+        document.getElementById('valAPK').textContent = d.apk;
+        document.getElementById('barAPK').style.width = Math.min(100, d.apk) + '%';
+        document.getElementById('valInternet').textContent = d.akses_internet;
+        document.getElementById('barInternet').style.width = Math.min(100, d.akses_internet) + '%';
+
+        document.getElementById('featureBars').innerHTML =
+            barRow('Ruang Kelas Layak (%)', d.ruang_kelas, 100, '#1E3A8A') +
+            barRow('Guru Berpendidikan S1 (%)', d.guru_s1, 100, '#6366f1') +
+            barRow('Sekolah Ber-lab (%)', d.sekolah_lab, 100, '#8b5cf6') +
+            barRow('Dropout Rate (%)', d.dropout_rate, 10, '#ef4444');
+
+        document.getElementById('infraBars').innerHTML =
+            barRow('Rasio Guru:Siswa', +(d.rasio_guru).toFixed(3), 0.15, '#f59e0b') +
+            barRow('Siswa per Sekolah', d.siswa_per_sekolah, 400, '#f97316') +
+            barRow('Persebaran Sekolah', +(d.persebaran_sekolah).toFixed(2), 1, '#10b981') +
+            barRow('Akses Sekolah', +(d.akses_sekolah).toFixed(2), 1, '#14b8a6');
+
+        detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ── Build ranking list ──────────────────────────────────────────────── */
+    function buildRanking() {
+        const container = document.getElementById('rankingList');
+        container.innerHTML = eqiData.map((d, i) => {
+            const color = eqiColor(d.eqi_score);
+            const score = d.eqi_score != null ? d.eqi_score.toFixed(2) : 'N/A';
+            return `<div class="rank-item flex items-center gap-4 py-3 px-2 rounded-xl cursor-pointer" onclick="selectKabupaten('${d.nama}')">
+                <span class="w-7 text-center text-xs font-bold text-slate-400">${i + 1}</span>
+                <span class="flex-1 text-sm font-semibold text-slate-700">${d.nama}</span>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full text-white" style="background:${color}">${d.kategori || '-'}</span>
+                <span class="text-sm font-bold" style="color:${color}">${score}</span>
+            </div>`;
+        }).join('');
+    }
+
+    /* ── Populate region select dropdown ────────────────────────────────── */
+    function buildSelect() {
+        eqiData.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.nama;
+            opt.textContent = d.nama;
+            regionSelect.appendChild(opt);
+        });
+    }
+
+    /* ── GeoJSON style using real EQI color ──────────────────────────────── */
+    function getFeatureColor(name) {
+        const d = eqiData.find(x => x.nama === name || name.includes(x.nama) || x.nama.includes(name));
+        return d && d.eqi_score != null ? eqiColor(d.eqi_score) : '#94a3b8';
+    }
+
+    function styleFeature(feature) {
+        return {
+            fillColor: getFeatureColor(feature.properties.name),
+            weight: 1, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.75
+        };
+    }
+
+    function highlightFeature(e) {
+        e.target.setStyle({ weight: 2, color: '#1E3A8A', dashArray: '', fillOpacity: 0.92 });
+        e.target.bringToFront();
+    }
+
+    function resetHighlight(e) { geoJsonLayer && geoJsonLayer.resetStyle && geoJsonLayer.resetStyle(e.target); }
+
+    function onEachFeature(feature, layer) {
+        const name = feature.properties.name;
+        const d = eqiData.find(x => x.nama === name || name.includes(x.nama) || x.nama.includes(name));
+        const score = d && d.eqi_score != null ? d.eqi_score.toFixed(2) : 'N/A';
+        const cat   = d ? (d.kategori || '') : '';
+        layer.bindTooltip(`<div class="text-center"><b>${name}</b><br>EQI: <span class="font-bold">${score}</span><br><small>${cat}</small></div>`);
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout:  resetHighlight,
+            click: function() {
+                const found = eqiData.find(x => x.nama === name || name.includes(x.nama) || x.nama.includes(name));
+                if (found) {
+                    regionSelect.value = found.nama;
+                    regionSelect.dispatchEvent(new Event('change'));
                 }
+            }
+        });
+    }
 
-                function style(feature) {
-                    return {
-                        fillColor: getColor(feature.properties.ranking),
-                        weight: 1,
-                        opacity: 1,
-                        color: 'white',
-                        dashArray: '3',
-                        fillOpacity: 0.7
-                    };
-                }
-                
-                function highlightFeature(e) {
-                    var layer = e.target;
-                    layer.setStyle({
-                        weight: 2,
-                        color: '#1E3A8A',
-                        dashArray: '',
-                        fillOpacity: 0.9
-                    });
-                    layer.bringToFront();
-                }
+    /* ── Init map ────────────────────────────────────────────────────────── */
+    function initMap() {
+        map = L.map('map').setView([-7.1509, 110.1402], 8);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
-                function resetHighlight(e) {
-                    geoJsonLayer.resetStyle(e.target);
-                }
+        fetch('/jawa-tengah.geojson')
+            .then(r => r.json())
+            .then(data => {
+                mapData = data;
+                geoJsonLayer = L.geoJSON(data, { style: styleFeature, onEachFeature }).addTo(map);
+                map.fitBounds(geoJsonLayer.getBounds());
+                loadingOverlay.classList.add('hidden');
+                mapWrapper.classList.remove('hidden');
+                setTimeout(() => map.invalidateSize(), 100);
+            })
+            .catch(err => {
+                loadingOverlay.textContent = 'Gagal memuat GeoJSON peta.';
+                console.error(err);
+            });
+    }
 
-                function onEachFeature(feature, layer) {
-                    layer.on({
-                        mouseover: highlightFeature,
-                        mouseout: resetHighlight,
-                        click: function(e) {
-                            var name = feature.properties.name;
-                            for (var i = 0; i < regionSelect.options.length; i++) {
-                                if (regionSelect.options[i].text.includes(name)) {
-                                    regionSelect.selectedIndex = i;
-                                    regionSelect.dispatchEvent(new Event('change'));
-                                    break;
-                                }
-                            }
-                        }
-                    });
-                    layer.bindTooltip('<div class="text-center"><b>' + feature.properties.name + '</b><br>Skor Kualitas Relatif: <span class="font-bold text-emerald-600">' + feature.properties.ranking + '</span>/100</div>');
-                }
+    /* ── Select kabupaten (from dropdown or rank click) ──────────────────── */
+    window.selectKabupaten = function(nama) {
+        regionSelect.value = nama;
+        regionSelect.dispatchEvent(new Event('change'));
+    };
 
-                fetch('/jawa-tengah.geojson')
-                    .then(response => response.json())
-                    .then(data => {
-                        mapData = data;
-                        geoJsonLayer = L.geoJSON(data, {
-                            style: style,
-                            onEachFeature: onEachFeature
-                        }).addTo(map);
-                        map.fitBounds(geoJsonLayer.getBounds());
-                    })
-                    .catch(error => console.error('Error loading GeoJSON:', error));
+    regionSelect.addEventListener('change', function () {
+        const nama = this.value;
 
-				regionSelect.addEventListener('change', function () {
-					var selectedValue = this.value;
-                    var name = this.options[this.selectedIndex].text;
-                    
-                    if (!selectedValue) {
-                        detailSection.classList.add('hidden');
-                        if (geoJsonLayer && mapData) {
-                            map.removeLayer(geoJsonLayer);
-                            geoJsonLayer = L.geoJSON(mapData, {
-                                style: style,
-                                onEachFeature: onEachFeature
-                            }).addTo(map);
-                            map.fitBounds(geoJsonLayer.getBounds());
-                        }
-                        return;
-                    }
+        if (!nama) {
+            detailSection.classList.add('hidden');
+            if (map && mapData) {
+                map.removeLayer(geoJsonLayer);
+                geoJsonLayer = L.geoJSON(mapData, { style: styleFeature, onEachFeature }).addTo(map);
+                map.fitBounds(geoJsonLayer.getBounds());
+            }
+            return;
+        }
 
-                    detailRegionName.textContent = name;
-                    detailSection.classList.remove('hidden');
+        const d = eqiData.find(x => x.nama === nama);
+        if (d) showDetail(d);
 
-                    if (geoJsonLayer && mapData) {
-                        map.removeLayer(geoJsonLayer);
-                        
-                        var selectedFeature = null;
-                        var otherFeatures = [];
+        if (map && mapData) {
+            map.removeLayer(geoJsonLayer);
+            const lg = L.layerGroup().addTo(map);
+            geoJsonLayer = lg;
 
-                        mapData.features.forEach(function(f) {
-                            if (f.properties.name === selectedValue || f.properties.name === name || name.includes(f.properties.name)) {
-                                selectedFeature = f;
-                            } else {
-                                otherFeatures.push(f);
-                            }
-                        });
+            const others = mapData.features.filter(f => {
+                return !(f.properties.name === nama || nama.includes(f.properties.name) || f.properties.name.includes(nama));
+            });
+            const selected = mapData.features.find(f =>
+                f.properties.name === nama || nama.includes(f.properties.name) || f.properties.name.includes(nama)
+            );
 
-                        geoJsonLayer = L.layerGroup().addTo(map);
+            L.geoJSON(others, {
+                style: { fillColor: '#cbd5e1', weight: 1, opacity: 0.4, color: 'white', fillOpacity: 0.2 },
+                onEachFeature
+            }).addTo(lg);
 
-                        L.geoJSON(otherFeatures, {
-                            style: {
-                                fillColor: '#cbd5e1',
-                                weight: 1,
-                                opacity: 0.5,
-                                color: 'white',
-                                fillOpacity: 0.2
-                            },
-                            onEachFeature: onEachFeature
-                        }).addTo(geoJsonLayer);
+            if (selected) {
+                const selLayer = L.geoJSON(selected, {
+                    style: {
+                        fillColor: getFeatureColor(selected.properties.name),
+                        weight: 3, opacity: 1, color: '#1E3A8A', fillOpacity: 0.92
+                    },
+                    onEachFeature
+                }).addTo(lg);
+                map.fitBounds(selLayer.getBounds(), { padding: [40, 40] });
+            }
+        }
+    });
 
-                        if (selectedFeature) {
-                            var selectedLayer = L.geoJSON(selectedFeature, {
-                                style: {
-                                    fillColor: getColor(selectedFeature.properties.ranking),
-                                    weight: 3,
-                                    opacity: 1,
-                                    color: '#1E3A8A',
-                                    fillOpacity: 0.9
-                                },
-                                onEachFeature: onEachFeature
-                            }).addTo(geoJsonLayer);
-                            map.fitBounds(selectedLayer.getBounds());
-                        }
-                    }
+    /* ── Refresh EQI via Laravel API ─────────────────────────────────────── */
+    window.refreshEqi = function () {
+        const btn = document.getElementById('btnRefresh');
+        btn.disabled = true;
+        btn.textContent = 'Menghitung...';
 
-                    updateDummyData();
-				});
+        fetch('/api/eqi-refresh', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                location.reload();
+            } else {
+                alert('Error: ' + res.message);
+                btn.disabled = false;
+                btn.textContent = 'Hitung Ulang EQI';
+            }
+        })
+        .catch(err => {
+            alert('Gagal menghubungi server: ' + err);
+            btn.disabled = false;
+            btn.textContent = 'Hitung Ulang EQI';
+        });
+    };
 
-                function updateDummyData() {
-                    document.getElementById('valRLS').textContent = (6 + Math.random() * 4).toFixed(1);
-                    
-                    var apsRata = (70 + Math.random() * 25).toFixed(1);
-                    document.getElementById('valAPS').textContent = apsRata;
-                    document.getElementById('valAPS').parentElement.nextElementSibling.firstElementChild.style.width = apsRata + '%';
-
-                    var apkRata = (75 + Math.random() * 25).toFixed(1);
-                    document.getElementById('valAPK').textContent = apkRata;
-                    document.getElementById('valAPK').parentElement.nextElementSibling.firstElementChild.style.width = apkRata + '%';
-
-                    var totalSekolah = Math.floor(500 + Math.random() * 1500);
-                    document.getElementById('valSekolah').textContent = totalSekolah.toLocaleString();
-                    document.getElementById('valSekolahDonut').textContent = totalSekolah.toLocaleString();
-
-                    ['SD', 'SMP', 'SMA'].forEach(function(lvl) {
-                        var aps = Math.floor(60 + Math.random() * 38);
-                        var apk = Math.floor(aps + Math.random() * 10);
-                        document.getElementById('valAps' + lvl).textContent = aps + '%';
-                        document.getElementById('barAps' + lvl).style.width = aps + '%';
-                        document.getElementById('valApk' + lvl).textContent = apk + '%';
-                        document.getElementById('barApk' + lvl).style.width = Math.min(100, apk) + '%';
-                    });
-
-                    var sdPct = Math.floor(50 + Math.random() * 20);
-                    var smpPct = Math.floor(20 + Math.random() * 15);
-                    var smaPct = 100 - sdPct - smpPct;
-                    
-                    document.getElementById('pctSD').textContent = sdPct;
-                    document.getElementById('pctSMP').textContent = smpPct;
-                    document.getElementById('pctSMA').textContent = smaPct;
-
-                    var p1 = sdPct;
-                    var p2 = sdPct + smpPct;
-                    
-                    document.getElementById('sekolahDonut').style.background = 
-                        `conic-gradient(#10b981 0% ${p1}%, #f59e0b ${p1}% ${p2}%, #ef4444 ${p2}% 100%)`;
-                }
-			});
-		</script>
-	</body>
+    /* ── Bootstrap: fetch EQI data then init everything ─────────────────── */
+    fetch('/api/eqi-data')
+        .then(r => r.json())
+        .then(res => {
+            eqiData = res.data || [];
+            buildSelect();
+            buildRanking();
+            initMap();
+        })
+        .catch(err => {
+            loadingOverlay.textContent = 'Gagal memuat data EQI dari server.';
+            console.error(err);
+        });
+})();
+</script>
+</body>
 </html>

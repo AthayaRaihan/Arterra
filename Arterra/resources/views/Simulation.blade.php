@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }} - Simulation</title>
+        <link rel="icon" type="image/png" href="{{ asset('assets/icon.png') }}">
+        <title>{{ config('app.name') }} </title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -40,41 +40,9 @@
                                         <div class="relative">
                                             <select id="regionSelect" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20">
                                                 <option value="" selected disabled>Pilih wilayah...</option>
-                                                <option value="Cilacap">Kab. Cilacap</option>
-                                                <option value="Banyumas">Kab. Banyumas</option>
-                                                <option value="Purbalingga">Kab. Purbalingga</option>
-                                                <option value="Banjarnegara">Kab. Banjarnegara</option>
-                                                <option value="Kebumen">Kab. Kebumen</option>
-                                                <option value="Purworejo">Kab. Purworejo</option>
-                                                <option value="Wonosobo">Kab. Wonosobo</option>
-                                                <option value="Magelang">Kab. Magelang</option>
-                                                <option value="Boyolali">Kab. Boyolali</option>
-                                                <option value="Klaten">Kab. Klaten</option>
-                                                <option value="Sukoharjo">Kab. Sukoharjo</option>
-                                                <option value="Wonogiri">Kab. Wonogiri</option>
-                                                <option value="Karanganyar">Kab. Karanganyar</option>
-                                                <option value="Sragen">Kab. Sragen</option>
-                                                <option value="Grobogan">Kab. Grobogan</option>
-                                                <option value="Blora">Kab. Blora</option>
-                                                <option value="Rembang">Kab. Rembang</option>
-                                                <option value="Pati">Kab. Pati</option>
-                                                <option value="Kudus">Kab. Kudus</option>
-                                                <option value="Jepara">Kab. Jepara</option>
-                                                <option value="Demak">Kab. Demak</option>
-                                                <option value="Semarang">Kab. Semarang</option>
-                                                <option value="Temanggung">Kab. Temanggung</option>
-                                                <option value="Kendal">Kab. Kendal</option>
-                                                <option value="Batang">Kab. Batang</option>
-                                                <option value="Pekalongan">Kab. Pekalongan</option>
-                                                <option value="Pemalang">Kab. Pemalang</option>
-                                                <option value="Tegal">Kab. Tegal</option>
-                                                <option value="Brebes">Kab. Brebes</option>
-                                                <option value="Kota Magelang">Kota Magelang</option>
-                                                <option value="Kota Surakarta">Kota Surakarta</option>
-                                                <option value="Kota Salatiga">Kota Salatiga</option>
-                                                <option value="Kota Semarang">Kota Semarang</option>
-                                                <option value="Kota Pekalongan">Kota Pekalongan</option>
-                                                <option value="Kota Tegal">Kota Tegal</option>
+                                                @foreach($kabupatenList as $kab)
+                                                    <option value="{{ $kab }}">{{ $kab }}</option>
+                                                @endforeach
                                             </select>
                                             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
                                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,26 +51,6 @@
                                             </span>
                                         </div>
                                     </div>
-
-                                    <!-- Year Select -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-2">Tahun Data</label>
-                                        <div class="relative">
-                                            <select id="yearSelect" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition focus:border-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]/20">
-                                                <option value="" selected disabled>Pilih tahun...</option>
-                                                <option value="2021">2021</option>
-                                                <option value="2022">2022</option>
-                                                <option value="2023">2023</option>
-                                                <option value="2024">2024</option>
-                                            </select>
-                                            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </div>
-
                                     <!-- Reset Button -->
                                     <div class="flex items-end">
                                         <button id="resetBtn" class="w-full rounded-xl bg-slate-200 hover:bg-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition">Atur Ulang</button>
@@ -291,136 +239,6 @@
                                     </div>
                                 </div>
                             </section>
-
-                            <!-- Factor Ranking Section -->
-                            <section class="mt-8">
-                                <h2 class="text-lg font-semibold text-[#1F2937] mb-4">Peringkat Faktor Pengaruh terhadap EQI</h2>
-                                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                    <div class="space-y-4">
-                                        <div class="flex items-center justify-between gap-4">
-                                            <div class="flex items-center gap-3 flex-1">
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-[#1E3A8A] text-white text-xs font-bold">1</div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm font-semibold text-slate-700" id="factor1Name">-</p>
-                                                    <p class="text-xs text-slate-500">Pengaruh relatif</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div id="factor1Bar" class="h-full bg-emerald-500 rounded-full" style="width: 100%"></div>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-slate-700 w-10 text-right" id="factor1Value">0%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center justify-between gap-4">
-                                            <div class="flex items-center gap-3 flex-1">
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-[#1E3A8A] text-white text-xs font-bold">2</div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm font-semibold text-slate-700" id="factor2Name">-</p>
-                                                    <p class="text-xs text-slate-500">Pengaruh relatif</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div id="factor2Bar" class="h-full bg-amber-500 rounded-full" style="width: 100%"></div>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-slate-700 w-10 text-right" id="factor2Value">0%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center justify-between gap-4">
-                                            <div class="flex items-center gap-3 flex-1">
-                                                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-[#1E3A8A] text-white text-xs font-bold">3</div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm font-semibold text-slate-700" id="factor3Name">-</p>
-                                                    <p class="text-xs text-slate-500">Pengaruh relatif</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div id="factor3Bar" class="h-full bg-red-500 rounded-full" style="width: 100%"></div>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-slate-700 w-10 text-right" id="factor3Value">0%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-
-                            <!-- Comparison Chart -->
-                            <section class="mt-8 mb-8">
-                                <h2 class="text-lg font-semibold text-[#1F2937] mb-4">Perbandingan Data Asli vs Simulasi</h2>
-                                <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                    <div class="space-y-6">
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Rata-rata Lama Sekolah</span>
-                                                <span class="text-sm font-bold text-slate-700"><span id="compRLS">0</span> → <span id="compRLSNew">0</span> tahun</span>
-                                            </div>
-                                            <div class="flex gap-2">
-                                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div id="compBarRLS" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                                <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div id="compBarRLSNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Angka Partisipasi Sekolah (APS)</span>
-                                                <span class="text-sm font-bold text-slate-700"><span id="compAPS">0</span>% → <span id="compAPSNew">0</span>%</span>
-                                            </div>
-                                            <div class="flex gap-2">
-                                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div id="compBarAPS" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                                <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div id="compBarAPSNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Angka Partisipasi Kasar (APK)</span>
-                                                <span class="text-sm font-bold text-slate-700"><span id="compAPK">0</span>% → <span id="compAPKNew">0</span>%</span>
-                                            </div>
-                                            <div class="flex gap-2">
-                                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div id="compBarAPK" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                                <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div id="compBarAPKNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div class="flex justify-between mb-2">
-                                                <span class="text-sm font-medium text-slate-700">Akses Internet</span>
-                                                <span class="text-sm font-bold text-slate-700"><span id="compAkses">0</span>% → <span id="compAksesNew">0</span>%</span>
-                                            </div>
-                                            <div class="flex gap-2">
-                                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div id="compBarAkses" class="h-full bg-slate-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                                <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                    <div id="compBarAksesNew" class="h-full bg-emerald-500 rounded-full" style="width: 0%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
                         </div>
                     </div>
                 </section>
@@ -430,7 +248,7 @@
         <script>
             const apiEndpoints = {
                 hitungEqi: "{{ route('simulation.hitung-eqi') }}",
-                sensitivity: "{{ route('simulation.sensitivity') }}"
+                kabupatenData: "{{ route('simulation.kabupaten-data') }}"
             };
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -448,26 +266,12 @@
                 return response.json();
             }
 
-            // Dummy data for each region and year
-            const regionData = {
-                'Cilacap': { '2021': { aps: 82, apk: 88, ruang_kelas_layak: 71, rata_lama_sekolah: 7.2, rasio_guru_siswa: 18, siswa_per_sekolah: 420, dropout_rate: 3.2, akses_internet: 76, guru_s1: 64, sekolah_lab: 55, persebaran_sekolah: 68, akses_sekolah: 72 }, '2022': { aps: 83, apk: 89, ruang_kelas_layak: 73, rata_lama_sekolah: 7.3, rasio_guru_siswa: 17.5, siswa_per_sekolah: 415, dropout_rate: 3.0, akses_internet: 78, guru_s1: 66, sekolah_lab: 56, persebaran_sekolah: 69, akses_sekolah: 73 }, '2023': { aps: 84, apk: 90, ruang_kelas_layak: 74, rata_lama_sekolah: 7.4, rasio_guru_siswa: 17, siswa_per_sekolah: 410, dropout_rate: 2.8, akses_internet: 80, guru_s1: 68, sekolah_lab: 58, persebaran_sekolah: 70, akses_sekolah: 74 }, '2024': { aps: 85, apk: 91, ruang_kelas_layak: 76, rata_lama_sekolah: 7.5, rasio_guru_siswa: 16.5, siswa_per_sekolah: 405, dropout_rate: 2.6, akses_internet: 82, guru_s1: 70, sekolah_lab: 60, persebaran_sekolah: 72, akses_sekolah: 75 } },
-                'Banyumas': { '2021': { aps: 78, apk: 84, ruang_kelas_layak: 66, rata_lama_sekolah: 6.8, rasio_guru_siswa: 20, siswa_per_sekolah: 460, dropout_rate: 3.8, akses_internet: 70, guru_s1: 60, sekolah_lab: 48, persebaran_sekolah: 64, akses_sekolah: 68 }, '2022': { aps: 79, apk: 85, ruang_kelas_layak: 67, rata_lama_sekolah: 6.9, rasio_guru_siswa: 19.5, siswa_per_sekolah: 450, dropout_rate: 3.6, akses_internet: 71, guru_s1: 61, sekolah_lab: 49, persebaran_sekolah: 65, akses_sekolah: 69 }, '2023': { aps: 80, apk: 86, ruang_kelas_layak: 68, rata_lama_sekolah: 7.0, rasio_guru_siswa: 19, siswa_per_sekolah: 445, dropout_rate: 3.4, akses_internet: 72, guru_s1: 62, sekolah_lab: 51, persebaran_sekolah: 66, akses_sekolah: 70 }, '2024': { aps: 81, apk: 87, ruang_kelas_layak: 70, rata_lama_sekolah: 7.1, rasio_guru_siswa: 18.5, siswa_per_sekolah: 440, dropout_rate: 3.2, akses_internet: 74, guru_s1: 64, sekolah_lab: 52, persebaran_sekolah: 67, akses_sekolah: 71 } },
-                'Kota Semarang': { '2021': { aps: 90, apk: 96, ruang_kelas_layak: 82, rata_lama_sekolah: 8.2, rasio_guru_siswa: 15, siswa_per_sekolah: 380, dropout_rate: 2.1, akses_internet: 88, guru_s1: 78, sekolah_lab: 72, persebaran_sekolah: 79, akses_sekolah: 84 }, '2022': { aps: 91, apk: 97, ruang_kelas_layak: 83, rata_lama_sekolah: 8.3, rasio_guru_siswa: 14.5, siswa_per_sekolah: 375, dropout_rate: 2.0, akses_internet: 89, guru_s1: 79, sekolah_lab: 74, persebaran_sekolah: 80, akses_sekolah: 85 }, '2023': { aps: 92, apk: 98, ruang_kelas_layak: 84, rata_lama_sekolah: 8.4, rasio_guru_siswa: 14, siswa_per_sekolah: 370, dropout_rate: 1.9, akses_internet: 90, guru_s1: 80, sekolah_lab: 75, persebaran_sekolah: 81, akses_sekolah: 86 }, '2024': { aps: 93, apk: 99, ruang_kelas_layak: 85, rata_lama_sekolah: 8.5, rasio_guru_siswa: 13.5, siswa_per_sekolah: 365, dropout_rate: 1.8, akses_internet: 91, guru_s1: 82, sekolah_lab: 76, persebaran_sekolah: 82, akses_sekolah: 87 } }
-            };
-
-            // Fill with default data for all regions
-            for (let region in regionData) {
-                if (!regionData[region]) regionData[region] = {};
-            }
-
             let currentRegion = null;
-            let currentYear = null;
             let originalData = null;
             let baselineEqi = null;
             let debounceTimer = null;
 
             const regionSelect = document.getElementById('regionSelect');
-            const yearSelect = document.getElementById('yearSelect');
             const simulationContent = document.getElementById('simulationContent');
             const resetBtn = document.getElementById('resetBtn');
 
@@ -519,79 +323,62 @@
 
             regionSelect.addEventListener('change', function() {
                 currentRegion = this.value;
-                if (currentRegion && currentYear) loadData();
-            });
-
-            yearSelect.addEventListener('change', function() {
-                currentYear = this.value;
-                if (currentRegion && currentYear) loadData();
+                if (currentRegion) loadData();
             });
 
             resetBtn.addEventListener('click', function() {
                 regionSelect.value = '';
-                yearSelect.value = '';
                 simulationContent.classList.add('hidden');
                 currentRegion = null;
-                currentYear = null;
                 baselineEqi = null;
             });
 
-            function loadData() {
-                // Get data for region and year (or generate if not exists)
-                let data = regionData[currentRegion]?.[currentYear] || generateDefaultData();
-                originalData = JSON.parse(JSON.stringify(data));
+            async function loadData() {
+                // Fetch data asli dari database
+                const res = await fetch(`${apiEndpoints.kabupatenData}?kabupaten=${encodeURIComponent(currentRegion)}`);
+                const json = await res.json();
 
-                // Populate inputs
-                inputs.rls.value = data.rata_lama_sekolah;
-                sliders.rls.value = data.rata_lama_sekolah;
-                inputs.aps.value = data.aps;
-                sliders.aps.value = data.aps;
-                inputs.apk.value = data.apk;
-                sliders.apk.value = data.apk;
-                inputs.ruang_kelas_layak.value = data.ruang_kelas_layak;
-                sliders.ruang_kelas_layak.value = data.ruang_kelas_layak;
-                inputs.rasio_guru_siswa.value = data.rasio_guru_siswa;
-                sliders.rasio_guru_siswa.value = data.rasio_guru_siswa;
-                inputs.siswa_per_sekolah.value = data.siswa_per_sekolah;
-                sliders.siswa_per_sekolah.value = data.siswa_per_sekolah;
-                inputs.dropout_rate.value = data.dropout_rate;
-                sliders.dropout_rate.value = data.dropout_rate;
-                inputs.akses_internet.value = data.akses_internet;
-                sliders.akses_internet.value = data.akses_internet;
-                inputs.guru_s1.value = data.guru_s1;
-                sliders.guru_s1.value = data.guru_s1;
-                inputs.sekolah_lab.value = data.sekolah_lab;
-                sliders.sekolah_lab.value = data.sekolah_lab;
-                inputs.persebaran_sekolah.value = data.persebaran_sekolah;
-                sliders.persebaran_sekolah.value = data.persebaran_sekolah;
-                inputs.akses_sekolah.value = data.akses_sekolah;
-                sliders.akses_sekolah.value = data.akses_sekolah;
+                if (!json.success) {
+                    alert('Data kabupaten tidak ditemukan.');
+                    return;
+                }
 
-                document.getElementById('selectedYear').textContent = currentYear;
+                const data = json.data;
+                originalData = { ...data };
+
+                // Populate inputs dengan data asli dari DB
+                inputs.rls.value              = data.rata_lama_sekolah   ?? 0;
+                sliders.rls.value             = data.rata_lama_sekolah   ?? 0;
+                inputs.aps.value              = data.aps                 ?? 0;
+                sliders.aps.value             = data.aps                 ?? 0;
+                inputs.apk.value              = data.apk                 ?? 0;
+                sliders.apk.value             = data.apk                 ?? 0;
+                inputs.ruang_kelas_layak.value = data.ruang_kelas_layak  ?? 0;
+                sliders.ruang_kelas_layak.value= data.ruang_kelas_layak  ?? 0;
+                inputs.rasio_guru_siswa.value  = data.rasio_guru_siswa   ?? 0;
+                sliders.rasio_guru_siswa.value = data.rasio_guru_siswa   ?? 0;
+                inputs.siswa_per_sekolah.value = data.siswa_per_sekolah  ?? 0;
+                sliders.siswa_per_sekolah.value= data.siswa_per_sekolah  ?? 0;
+                inputs.dropout_rate.value      = data.dropout_rate       ?? 0;
+                sliders.dropout_rate.value     = data.dropout_rate       ?? 0;
+                inputs.akses_internet.value    = data.akses_internet     ?? 0;
+                sliders.akses_internet.value   = data.akses_internet     ?? 0;
+                inputs.guru_s1.value           = data.guru_s1            ?? 0;
+                sliders.guru_s1.value          = data.guru_s1            ?? 0;
+                inputs.sekolah_lab.value       = data.sekolah_lab        ?? 0;
+                sliders.sekolah_lab.value      = data.sekolah_lab        ?? 0;
+                inputs.persebaran_sekolah.value= data.persebaran_sekolah ?? 0;
+                sliders.persebaran_sekolah.value=data.persebaran_sekolah ?? 0;
+                inputs.akses_sekolah.value     = data.akses_sekolah      ?? 0;
+                sliders.akses_sekolah.value    = data.akses_sekolah      ?? 0;
 
                 simulationContent.classList.remove('hidden');
                 baselineEqi = null;
                 runSimulation(true);
             }
 
-            function generateDefaultData() {
-                return {
-                    aps: 80,
-                    apk: 86,
-                    ruang_kelas_layak: 70,
-                    rata_lama_sekolah: 7.2,
-                    rasio_guru_siswa: 18,
-                    siswa_per_sekolah: 430,
-                    dropout_rate: 3.0,
-                    akses_internet: 74,
-                    guru_s1: 62,
-                    sekolah_lab: 50,
-                    persebaran_sekolah: 66,
-                    akses_sekolah: 70
-                };
-            }
             function scheduleSimulation() {
-                if (!currentRegion || !currentYear) {
+                if (!currentRegion) {
                     return;
                 }
                 clearTimeout(debounceTimer);
@@ -612,23 +399,6 @@
                     sekolah_lab: parseFloat(inputs.sekolah_lab.value),
                     persebaran_sekolah: parseFloat(inputs.persebaran_sekolah.value),
                     akses_sekolah: parseFloat(inputs.akses_sekolah.value)
-                };
-            }
-
-            function buildSensitivityPayload(currentData) {
-                return {
-                    'aps': currentData.aps,
-                    'apk': currentData.apk,
-                    'ruang_kelas_layak_(%)': currentData.ruang_kelas_layak,
-                    'rata"_lama_sekolah_(tahun)': currentData.rata_lama_sekolah,
-                    'rasio_guru_siswa': currentData.rasio_guru_siswa,
-                    'siswa_per_sekolah': currentData.siswa_per_sekolah,
-                    'dropout_rate': currentData.dropout_rate,
-                    'akses_internet(%)': currentData.akses_internet,
-                    'guru_s1(%)': currentData.guru_s1,
-                    'sekolah_lab(%)': currentData.sekolah_lab,
-                    'persebaran_sekolah': currentData.persebaran_sekolah,
-                    'akses_sekolah': currentData.akses_sekolah
                 };
             }
 
@@ -662,7 +432,7 @@
                 // Update difference
                 document.getElementById('eqiDifference').innerHTML = `<span>${difference.toFixed(1)}</span><span class="text-lg text-slate-500">/100</span>`;
                 document.getElementById('eqiDifferencePercent').textContent = (differencePercent >= 0 ? '+' : '') + differencePercent.toFixed(1) + '%';
-                
+
                 if (difference >= 0) {
                     document.getElementById('eqiDifference').classList.remove('text-red-600');
                     document.getElementById('eqiDifference').classList.add('text-emerald-600');
@@ -679,49 +449,6 @@
                 document.getElementById('qualityRank').textContent = stored.kategori || '-';
                 document.getElementById('qualityBar').style.backgroundColor = stored.warna || '#1E3A8A';
                 document.getElementById('qualityBar').style.width = newEQI + '%';
-
-                const sensitivity = await postJson(apiEndpoints.sensitivity, {
-                    data_kabupaten: buildSensitivityPayload(currentData),
-                    perubahan: 5
-                });
-
-                if (sensitivity && sensitivity.success && sensitivity.data && Array.isArray(sensitivity.data.hasil)) {
-                    const colors = ['#10b981', '#f59e0b', '#ef4444'];
-                    const maxDelta = Math.max(...sensitivity.data.hasil.map(item => Math.abs(item.delta_eqi || 0)), 1);
-                    const topThree = sensitivity.data.hasil.slice(0, 3);
-                    for (let i = 0; i < 3; i++) {
-                        const item = topThree[i];
-                        if (!item) {
-                            continue;
-                        }
-                        const percentage = (Math.abs(item.delta_eqi || 0) / maxDelta) * 100;
-                        document.getElementById(`factor${i + 1}Name`).textContent = item.label || item.fitur || '-';
-                        document.getElementById(`factor${i + 1}Value`).textContent = percentage.toFixed(0) + '%';
-                        document.getElementById(`factor${i + 1}Bar`).style.width = percentage + '%';
-                        document.getElementById(`factor${i + 1}Bar`).style.backgroundColor = colors[i];
-                    }
-                }
-
-                // Update comparison chart
-                document.getElementById('compRLS').textContent = originalData.rata_lama_sekolah;
-                document.getElementById('compRLSNew').textContent = currentData.rata_lama_sekolah.toFixed(1);
-                document.getElementById('compBarRLS').style.width = (originalData.rata_lama_sekolah / 20) * 100 + '%';
-                document.getElementById('compBarRLSNew').style.width = (currentData.rata_lama_sekolah / 20) * 100 + '%';
-
-                document.getElementById('compAPS').textContent = originalData.aps.toFixed(0);
-                document.getElementById('compAPSNew').textContent = currentData.aps.toFixed(1);
-                document.getElementById('compBarAPS').style.width = originalData.aps + '%';
-                document.getElementById('compBarAPSNew').style.width = currentData.aps + '%';
-
-                document.getElementById('compAPK').textContent = originalData.apk.toFixed(0);
-                document.getElementById('compAPKNew').textContent = currentData.apk.toFixed(1);
-                document.getElementById('compBarAPK').style.width = Math.min(100, originalData.apk) + '%';
-                document.getElementById('compBarAPKNew').style.width = Math.min(100, currentData.apk) + '%';
-
-                document.getElementById('compAkses').textContent = originalData.akses_internet.toFixed(0);
-                document.getElementById('compAksesNew').textContent = currentData.akses_internet.toFixed(1);
-                document.getElementById('compBarAkses').style.width = originalData.akses_internet + '%';
-                document.getElementById('compBarAksesNew').style.width = currentData.akses_internet + '%';
             }
         </script>
     </body>

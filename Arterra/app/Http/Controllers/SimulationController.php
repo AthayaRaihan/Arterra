@@ -29,14 +29,49 @@ class SimulationController extends Controller
 
     public function __construct()
     {
-        $this->apiUrl = config('services.ml_api.url');
+        $this->apiUrl = config('services.ml_api.url', 'http://127.0.0.1:8001');
     }
 
     // ── Halaman utama simulasi ────────────────────────────────
     public function index()
     {
+        $kabupatenList = EduQuality::orderBy('kabupaten/kota')->pluck('kabupaten/kota');
+
         return view('Simulation', [
-            'label_fitur' => $this->labelFitur,
+            'label_fitur'    => $this->labelFitur,
+            'kabupatenList'  => $kabupatenList,
+        ]);
+    }
+
+    // ── API: ambil data asli 1 kabupaten dari DB ──────────────
+    public function getKabupatenData(Request $request)
+    {
+        $nama = $request->query('kabupaten');
+        $record = EduQuality::where('kabupaten/kota', $nama)->first();
+
+        if (!$record) {
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'kabupaten'          => $record->{'kabupaten/kota'},
+                'eqi_score'          => $record->eqi_score,
+                'kategori'           => $record->kategori,
+                'aps'                => $record->aps,
+                'apk'                => $record->apk,
+                'ruang_kelas_layak'  => $record->ruang_kelas,
+                'rata_lama_sekolah'  => $record->rls,
+                'rasio_guru_siswa'   => $record->rasio_guru,
+                'siswa_per_sekolah'  => $record->siswa_per_sekolah,
+                'dropout_rate'       => $record->dropout_rate,
+                'akses_internet'     => $record->akses_internet,
+                'guru_s1'            => $record->guru_s1,
+                'sekolah_lab'        => $record->sekolah_lab,
+                'persebaran_sekolah' => $record->persebaran_sekolah,
+                'akses_sekolah'      => $record->akses_sekolah,
+            ]
         ]);
     }
 
@@ -77,11 +112,15 @@ class SimulationController extends Controller
         }
 
         $apiData = $response->json();
-        $record = EduQuality::create($this->mapForDb($validated, $apiData));
 
+        // Tidak disimpan ke database — hanya kembalikan hasil prediksi
         return response()->json([
             'success' => true,
-            'data'    => EduQuality::find($record->id)
+            'data'    => [
+                'eqi_score' => $apiData['eqi_score'] ?? null,
+                'kategori'  => $apiData['kategori']  ?? null,
+                'warna'     => $apiData['warna']      ?? null,
+            ]
         ]);
     }
 

@@ -44,17 +44,6 @@
                     </span>
                 </a>
 
-                <a class="group px-3 py-2 rounded-xl {{ $isPrediction ? 'bg-[#F59E0B] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#F59E0B]/10 hover:text-[#B45309] transition' }}" href="{{ route('prediction') }}">
-                    <span class="flex items-center gap-2">
-                        <span class="flex h-7 w-7 items-center justify-center rounded-lg {{ $isPrediction ? 'bg-white/15 text-white' : 'bg-[#F59E0B]/10 text-[#B45309]' }}">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
-                                <path d="M4 18L9 12L13 15L20 7" stroke="currentColor" stroke-width="1.5"/>
-                            </svg>
-                        </span>
-                        Prediction
-                    </span>
-                </a>
-
                 <a class="group px-3 py-2 rounded-xl {{ $isSimulation ? 'bg-[#14B8A6] text-white font-semibold shadow-sm' : 'text-slate-700 hover:bg-[#14B8A6]/10 hover:text-[#0F766E] transition' }}" href="{{ route('simulation.index') }}">
                     <span class="flex items-center gap-2">
                         <span class="flex h-7 w-7 items-center justify-center rounded-lg {{ $isSimulation ? 'bg-white/15 text-white' : 'bg-[#14B8A6]/10 text-[#0F766E]' }}">

@@ -23,11 +23,141 @@
         <div class="min-h-screen">
             <x-sidebar />
             <main class="lg:pl-72">
-                <section class="px-6 py-8">
-                    <h1 class="text-2xl font-semibold">Dashboard</h1>
-                    <p class="mt-2 text-slate-600">Konten dashboard akan ditambahkan di sini.</p>
+                <section class="px-6 py-6 max-w-6xl mx-auto h-[calc(100vh-2rem)] flex flex-col">
+                    
+                    {{-- HEADER / HERO --}}
+                    <div class="mb-4 shrink-0">
+                        <h1 class="text-2xl font-bold text-[#0F172A]">Dashboard Education Quality Index (EQI) Jawa Tengah</h1>
+                        <p class="mt-1 text-sm text-slate-500 font-medium">Ringkasan kondisi kualitas pendidikan antar kabupaten/kota</p>
+                    </div>
+
+                    @if($totalWilayah == 0)
+                        <div class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl shrink-0">
+                            Belum ada data EQI. Silakan jalankan pipeline EQI atau generate prediksi terlebih dahulu.
+                        </div>
+                    @else
+
+                    {{-- 2 KARTU RINGKAS UTAMA --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 shrink-0">
+                        {{-- Rata-rata EQI --}}
+                        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Rata-rata EQI Provinsi</p>
+                                <h3 class="text-4xl font-black text-[#1E3A8A]">{{ number_format($rataRataEqi, 2) }}</h3>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <div class="w-12 h-1.5 rounded-full bg-[#1E3A8A]"></div>
+                                <span class="text-xs text-slate-400 font-medium">Skor rata-rata seluruh kabupaten/kota</span>
+                            </div>
+                        </div>
+
+                        {{-- Total Wilayah --}}
+                        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Total Wilayah</p>
+                                <h3 class="text-4xl font-black text-slate-800">{{ $totalWilayah }}</h3>
+                            </div>
+                            <div class="mt-4">
+                                <span class="text-xs text-slate-500 font-medium">Kabupaten / Kota yang dianalisis</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{-- GRAFIK BATANG CHART.JS --}}
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex-1 flex flex-col min-h-0">
+                        <div class="mb-2 shrink-0">
+                            <h2 class="text-base font-bold text-[#0F172A]">Grafik Kategori Kualitas Pendidikan</h2>
+                            <p class="text-xs text-slate-500 mt-1">Visualisasi batang perbandingan jumlah wilayah per kategori</p>
+                        </div>
+                        <div class="relative w-full flex-1 min-h-0">
+                            <canvas id="eqiChart"></canvas>
+                        </div>
+                    </div>
+
+                    @endif
                 </section>
             </main>
         </div>
+
+        {{-- Script Chart.js --}}
+        @if($totalWilayah > 0)
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ctx = document.getElementById('eqiChart').getContext('2d');
+                
+                // Data dari controller
+                const dataDistribusi = [
+                    {{ $distribusi['Sangat Baik'] }},
+                    {{ $distribusi['Baik'] }},
+                    {{ $distribusi['Cukup'] }},
+                    {{ $distribusi['Rendah'] }}
+                ];
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Sangat Baik', 'Baik', 'Cukup', 'Rendah'],
+                        datasets: [{
+                            label: 'Jumlah Kabupaten/Kota',
+                            data: dataDistribusi,
+                            backgroundColor: [
+                                '#10b981', // emerald-500
+                                '#1E3A8A', // blue-900 custom
+                                '#fbbf24', // amber-400
+                                '#f43f5e'  // rose-500
+                            ],
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barPercentage: 0.6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false // sembunyikan legend karena sudah jelas dari label sumbu x
+                            },
+                            tooltip: {
+                                backgroundColor: '#0F172A',
+                                padding: 12,
+                                titleFont: { size: 14, family: "'Instrument Sans', sans-serif" },
+                                bodyFont: { size: 14, family: "'Instrument Sans', sans-serif" },
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y + ' Wilayah';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
+                                    font: { family: "'Instrument Sans', sans-serif" }
+                                },
+                                grid: {
+                                    color: '#f1f5f9',
+                                    drawBorder: false,
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false,
+                                },
+                                ticks: {
+                                    font: { family: "'Instrument Sans', sans-serif", weight: 'bold' }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+        @endif
     </body>
 </html>

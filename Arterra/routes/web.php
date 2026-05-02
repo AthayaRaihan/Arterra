@@ -5,7 +5,21 @@ use App\Http\Controllers\SimulationController;
 use App\Http\Controllers\EQIcontroller;
 
 Route::get('/', function () {
-    return view('dashboard');
+    $data = \App\Models\EduQuality::whereNotNull('eqi_score')->get();
+    
+    $totalWilayah = $data->count();
+    $rataRataEqi = $data->avg('eqi_score');
+    $terbaik = $data->sortByDesc('eqi_score')->first();
+    $terendah = $data->sortBy('eqi_score')->first();
+    
+    $distribusi = [
+        'Sangat Baik' => $data->where('kategori', 'Sangat Baik')->count(),
+        'Baik' => $data->where('kategori', 'Baik')->count(),
+        'Cukup' => $data->where('kategori', 'Cukup')->count(),
+        'Rendah' => $data->where('kategori', 'Rendah')->count(),
+    ];
+
+    return view('dashboard', compact('totalWilayah', 'rataRataEqi', 'terbaik', 'terendah', 'distribusi'));
 })->name('dashboard');
 
 // EQI page — rendered by controller so pipeline runs automatically if needed

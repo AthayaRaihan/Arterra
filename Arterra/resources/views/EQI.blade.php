@@ -12,7 +12,6 @@
     <style>
         #map { height: 500px; width: 100%; }
         .detail-card { transition: all 0.4s ease; }
-        .rank-item:hover { background: #f1f5f9; }
         .bar-fill { transition: width 1s ease; }
     </style>
 </head>
@@ -197,7 +196,20 @@
             barRow('Persebaran Sekolah', +(d.persebaran_sekolah).toFixed(2), 1, '#10b981') +
             barRow('Akses Sekolah', +(d.akses_sekolah).toFixed(2), 1, '#14b8a6');
 
-        detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Do not auto-scroll — user stays at the map position
+    }
+
+    /* ── Highlight ranking item ──────────────────────────────────────────── */
+    function highlightRanking(nama) {
+        document.querySelectorAll('.rank-item').forEach(el => {
+            if (nama && el.dataset.nama === nama) {
+                el.classList.add('bg-[#1E3A8A]/5', 'ring-1', 'ring-[#1E3A8A]/30', 'shadow-sm', 'font-black');
+                el.classList.remove('hover:bg-[#f1f5f9]'); // optional remove hover effect when selected
+            } else {
+                el.classList.remove('bg-[#1E3A8A]/5', 'ring-1', 'ring-[#1E3A8A]/30', 'shadow-sm', 'font-black');
+                el.classList.add('hover:bg-[#f1f5f9]');
+            }
+        });
     }
 
     /* ── Build ranking list ──────────────────────────────────────────────── */
@@ -206,7 +218,7 @@
         container.innerHTML = eqiData.map((d, i) => {
             const color = eqiColor(d.eqi_score);
             const score = d.eqi_score != null ? d.eqi_score.toFixed(2) : 'N/A';
-            return `<div class="rank-item flex items-center gap-4 py-3 px-2 rounded-xl cursor-pointer" onclick="selectKabupaten('${d.nama}')">
+            return `<div class="rank-item flex items-center gap-4 py-3 px-2 rounded-xl cursor-pointer hover:bg-[#f1f5f9] transition-all" data-nama="${d.nama}" onclick="selectKabupaten('${d.nama}')">
                 <span class="w-7 text-center text-xs font-bold text-slate-400">${i + 1}</span>
                 <span class="flex-1 text-sm font-semibold text-slate-700">${d.nama}</span>
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full text-white" style="background:${color}">${d.kategori || '-'}</span>
@@ -239,11 +251,40 @@
     }
 
     function highlightFeature(e) {
+        const selectedValue = regionSelect.value;
+        const name = e.target.feature.properties.name;
+        
+        // Jika sedang fokus ke satu kabupaten, jangan highlight kabupaten lain di sekitarnya
+        if (selectedValue && !(name === selectedValue || selectedValue.includes(name) || name.includes(selectedValue))) {
+            return;
+        }
+
         e.target.setStyle({ weight: 2, color: '#1E3A8A', dashArray: '', fillOpacity: 0.92 });
-        e.target.bringToFront();
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            e.target.bringToFront();
+        }
     }
 
-    function resetHighlight(e) { geoJsonLayer && geoJsonLayer.resetStyle && geoJsonLayer.resetStyle(e.target); }
+    function resetHighlight(e) {
+        const selectedValue = regionSelect.value;
+        const name = e.target.feature && e.target.feature.properties.name;
+        
+        // Jika sedang fokus ke satu kabupaten, abaikan reset untuk kabupaten lain
+        if (selectedValue && !(name === selectedValue || selectedValue.includes(name) || name.includes(selectedValue))) {
+            return;
+        }
+
+        // geoJsonLayer may be a L.GeoJSON (has resetStyle) or L.LayerGroup (doesn't)
+        if (geoJsonLayer && typeof geoJsonLayer.resetStyle === 'function') {
+            geoJsonLayer.resetStyle(e.target);
+        } else {
+            // Restore style manually based on the feature's EQI color
+            e.target.setStyle({
+                fillColor: name ? getFeatureColor(name) : '#94a3b8',
+                weight: 1, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.75
+            });
+        }
+    }
 
     function onEachFeature(feature, layer) {
         const name = feature.properties.name;
@@ -266,6 +307,10 @@
 
     /* ── Init map ────────────────────────────────────────────────────────── */
     function initMap() {
+        // Tampilkan container map dulu agar Leaflet bisa menghitung ukurannya
+        loadingOverlay.classList.add('hidden');
+        mapWrapper.classList.remove('hidden');
+
         map = L.map('map').setView([-7.1509, 110.1402], 8);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
@@ -274,12 +319,14 @@
             .then(data => {
                 mapData = data;
                 geoJsonLayer = L.geoJSON(data, { style: styleFeature, onEachFeature }).addTo(map);
+                
+                // Pastikan ukuran di-refresh sebelum nge-fit bounds
+                map.invalidateSize();
                 map.fitBounds(geoJsonLayer.getBounds());
-                loadingOverlay.classList.add('hidden');
-                mapWrapper.classList.remove('hidden');
-                setTimeout(() => map.invalidateSize(), 100);
             })
             .catch(err => {
+                mapWrapper.classList.add('hidden');
+                loadingOverlay.classList.remove('hidden');
                 loadingOverlay.textContent = 'Gagal memuat GeoJSON peta.';
                 console.error(err);
             });
@@ -293,6 +340,8 @@
 
     regionSelect.addEventListener('change', function () {
         const nama = this.value;
+
+        highlightRanking(nama);
 
         if (!nama) {
             detailSection.classList.add('hidden');
